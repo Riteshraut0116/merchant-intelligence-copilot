@@ -2,7 +2,7 @@
 
 **AWS AI for Bharat Hackathon Submission**  
 **Team:** Bharat Brain Wave | **Lead:** Ritesh Raut  
-**Theme:** AI for Retail, Commerce & Market Intelligence
+**Theme:** AI for Retail, Commerce & Market Intelligence 
 **Problem Statement:** Build an AI-powered solution that helps people learn faster, work smarter, or become more productive while building or understanding technology.
 
 ---
@@ -680,6 +680,7 @@ AI-powered decision copilot for Bharat’s MSME sellers 📊🤖
 
 
 **Built with ❤️ for Bharat MSMEs**
+
 
 
 
