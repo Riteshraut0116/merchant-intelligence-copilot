@@ -1,8 +1,7 @@
 # Merchant Intelligence Copilot for Indian MSMEs
 
 **AWS AI for Bharat Hackathon Submission**  
-**Team:** Bharat Brain Wave  
-**Lead:** Ritesh Raut  
+**Team:** Bharat Brain Wave |  **Lead:** Ritesh Raut  
 
 **Theme:** AI for Retail, Commerce & Market Intelligence  
 
@@ -684,6 +683,7 @@ AI-powered decision copilot for Bharat’s MSME sellers 📊🤖
 
 
 **Built with ❤️ for Bharat MSMEs**
+
 
 
 
