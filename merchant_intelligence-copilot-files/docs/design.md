@@ -1427,7 +1427,7 @@ def validate_llm_output(llm_response, merchant_products):
 
 **1. Dashboard Header**:
 ```
-⚠️ AI-generated recommendations. Verify before acting.
+AI‑assisted insights to support smarter business decisions.
 ```
 
 **2. Chat Interface**:

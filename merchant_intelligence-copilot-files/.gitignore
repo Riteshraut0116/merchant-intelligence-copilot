@@ -1,0 +1,69 @@
+# =========================
+# Node / Frontend (Vite + React)
+# =========================
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Frontend environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+
+# =========================
+# Python / Backend (FastAPI)
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python test / cache
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Backend environment files
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.production
+
+# =========================
+# OS / Editor
+# =========================
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# =========================
+# Logs & Temp files
+# =========================
+*.log
+*.tmp
+
+# =========================
+# Misc
+# =========================
+.cache/
+``

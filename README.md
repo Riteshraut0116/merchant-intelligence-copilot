@@ -382,7 +382,7 @@ All AI outputs include quantified uncertainty:
 ### Disclaimers
 
 Displayed prominently throughout the system:
-- **Dashboard Header**: "⚠️ AI-generated recommendations. Verify before acting."
+- **Dashboard Header**: "AI‑assisted insights to support smarter business decisions."
 - **Chat Interface**: "This is an AI assistant. Always use your business judgment."
 - **Weekly Reports**: "Automated insights. Review with your business knowledge."
 - **API Responses**: Every response includes disclaimer field

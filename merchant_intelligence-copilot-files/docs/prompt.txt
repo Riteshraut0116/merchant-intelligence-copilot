@@ -1,0 +1,144 @@
+TITLE: Upgrade Merchant Intelligence Copilot UI to Hackathon-Ready Product (No Kiro Specs) + Add GitHub Top-Right Link + Update README
+
+PROJECT CONTEXT:
+Repo: merchant-intelligence-copilot
+Frontend: React + Vite + Tailwind
+Backend currently provides:
+- GET /health
+- POST /generate-insights with JSON { csv_text: string, language?: "en"|"hi"|"mr" }
+
+GOAL:
+Make the UI interactive, attractive, and judge-ready. Add a real CSV upload UI (drag/drop + browse), polished dashboard with KPIs and charts, a “Why?” explainability drawer, theme toggle, About page, footer, and GitHub link in the upper-right corner. Update README to match.
+
+OBJECTIVES (IMPLEMENT ALL):
+
+A) App Shell + Navigation
+1) Build a global app layout with a modern header and navigation:
+   - Pages/routes: Dashboard, Upload Data, Copilot Chat, Weekly Report, Settings, About
+   - Use sidebar on desktop + compact top navigation on mobile.
+2) Add branding in header:
+   - App name: Merchant Intelligence Copilot
+   - Team: Bharat Brain Wave
+3) Add a global disclaimer banner visible on all pages:
+   - “AI‑assisted insights to support smarter business decisions.”
+4) Ensure mobile responsiveness, spacing, and modern UI polish.
+
+B) GitHub Link (Upper Right) — REQUIRED
+1) Add a GitHub icon button at the upper-right of the header.
+2) Read the repo URL from VITE_GITHUB_URL (env variable).
+3) Open link in new tab with rel="noreferrer noopener".
+4) Tooltip on hover: “View source on GitHub”.
+5) If VITE_GITHUB_URL is missing/empty, hide the icon (do not render a broken link).
+6) Icon must respect dark/light theme with hover/focus states.
+
+C) Theme Toggle (Light/Dark)
+1) Add a light/dark toggle in header near GitHub icon.
+2) Persist theme in localStorage.
+3) Implement Tailwind dark mode (class strategy) so both themes look great.
+
+D) Upload Data Page (Real CSV Upload + Preview + Validation)
+1) Create Upload Data page with drag-and-drop area + browse button.
+2) Validate:
+   - file extension must be .csv
+   - required columns: date, product_name, quantity_sold, price, revenue
+3) Show:
+   - file name + size
+   - preview first 5 rows in a table
+4) On “Analyze”:
+   - read CSV in browser
+   - call backend /generate-insights with { csv_text, language }
+5) Save the latest insights + last uploaded filename to localStorage so refresh keeps demo.
+
+E) Dashboard Upgrade (Judge-friendly)
+1) KPI cards at top:
+   - Products analyzed
+   - Alerts count
+   - Average confidence
+   - Top reorder item (highest reorder quantity)
+2) Product selector:
+   - user selects a product to view details
+3) Forecast chart:
+   - use Recharts
+   - plot 7-day forecast yhat
+   - show confidence band (yhat_lower/yhat_upper) if present
+4) Insights cards/table:
+   - Confidence badge colors:
+     - Green > 80
+     - Yellow 60–80
+     - Red < 60
+   - Urgency badge (high/medium)
+   - Alert chips (spike/drop/slow_moving) + severity if present
+5) Add “Why?” explainability:
+   - For each product, show a drawer/modal with:
+     - reason summary based on anomalies + forecast
+     - reorder calculation explanation (forecast sum + safety stock)
+     - confidence explanation (why high/medium/low)
+   - Must be simple and merchant-friendly, not technical jargon.
+
+F) Copilot Chat Page (UI + Graceful Stub)
+1) Build chat UI:
+   - message list (user/assistant)
+   - input box
+   - language selector EN/HI/MR
+   - show disclaimer and confidence score under assistant messages
+2) If backend /chat is not available, show a clear non-breaking message:
+   - “Chat backend not connected yet.”
+   - Keep UI working without crashes.
+   - Optionally use latest insights summary to simulate a response locally.
+
+G) Weekly Report Page (UI + Local Fallback)
+1) Weekly report layout:
+   - Top 3 priorities
+   - Expected impact
+   - Risks/alerts
+2) If backend report endpoint is not available, generate client-side from latest insights:
+   - prioritize reorder + anomalies
+3) Include disclaimer and confidence notes.
+
+H) About Page + Footer (Credibility)
+1) Add About page with:
+   - MSME problem summary + what solution does
+   - AI usage: forecasting + Bedrock reasoning (high-level)
+   - Responsible AI: disclaimers + confidence scoring + limitations
+   - Hackathon context
+2) Add footer visible on all pages:
+   - “© 2026 Bharat Brain Wave”
+   - “Built for AI for Bharat Hackathon”
+   - GitHub link (optional repeat) using VITE_GITHUB_URL
+   - Do not use copyrighted images/assets.
+
+I) Update Frontend .env.example
+Add these variables:
+- VITE_API_BASE_URL=http://127.0.0.1:3000
+- VITE_GITHUB_URL=https://github.com/<username>/<repo>
+
+J) Update README.md
+Update README.md so it matches the new UI and run steps:
+1) Features list: upload CSV, dashboard KPIs, forecast chart, alerts, Why drawer, theme toggle, GitHub link, About page, chat/report UI.
+2) How to run locally (Windows PowerShell friendly):
+   - Frontend: cd frontend; npm i; copy .env.example .env; npm run dev
+   - Backend: run local backend on port 3000 (FastAPI) OR deployed URL; explain VITE_API_BASE_URL usage.
+3) Environment variables:
+   - VITE_API_BASE_URL
+   - VITE_GITHUB_URL
+4) Add a short “Security note” about npm audit dev-server tool vulnerabilities and why we avoided breaking upgrades.
+5) Add a 3-minute demo walkthrough section.
+
+CONSTRAINTS:
+- Keep dependencies minimal (avoid breaking changes).
+- Must work with npm run dev.
+- Must not hardcode GitHub URL; it must come from VITE_GITHUB_URL.
+- Must not crash if chat/report backend endpoints are missing.
+- Mobile responsive and visually polished.
+
+ACCEPTANCE CHECKLIST:
+1) npm run dev works.
+2) Header shows theme toggle + GitHub icon (only if env var set).
+3) Upload page supports drag/drop, validation, preview, and calls /generate-insights.
+4) Dashboard shows KPIs, chart, badges, and Why drawer.
+5) About + footer exist and look professional.
+6) README has correct run steps and env vars.
+
+IMPLEMENT NOW:
+Make the code changes across frontend and README, then run npm run dev and fix any errors.
+Finally summarize changed files and how to verify end-to-end.
