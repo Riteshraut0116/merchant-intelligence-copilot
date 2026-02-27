@@ -1,25 +1,29 @@
-TITLE: Upgrade Merchant Intelligence Copilot UI to Hackathon-Ready Product
-+ Integrate AWS API Gateway (Prod Architecture)
-+ Add GitHub Top-Right Link
-+ Update README (Local + AWS)
+TITLE: Upgrade Merchant Intelligence Copilot UI to Hackathon-Ready Product (AWS Native)
 
 PROJECT CONTEXT:
 Repo: merchant-intelligence-copilot
 Frontend: React + Vite + Tailwind
-Backend:
-- Local development: FastAPI server
-- Production architecture: AWS API Gateway → Backend service (Lambda or container)
+Backend: AWS-native serverless
 
-Existing backend endpoints:
-- GET /health
+Backend execution model:
+- Local development: AWS SAM Local (emulates API Gateway → Lambda)
+- Production: AWS API Gateway → Lambda (or container behind API Gateway)
+No FastAPI / uvicorn / local web server framework is used.
+
+Core API endpoints (same paths in local SAM + production API Gateway):
+- GET  /health
 - POST /generate-insights
   Payload: { csv_text: string, language?: "en" | "hi" | "mr" }
 
+Optional endpoints (may not exist yet; UI must not crash):
+- POST /chat
+- GET  /weekly-report
+
 GOAL:
-Make the UI interactive, attractive, and judge-ready, while clearly aligning
-with AWS hackathon guidelines by supporting AWS API Gateway as the production
-API layer. The app must work locally (FastAPI) and be configurable for API
-Gateway using environment variables.
+Make the UI interactive, attractive, and judge-ready. Align explicitly with AWS
+hackathon expectations by using AWS API Gateway as the production API layer and
+AWS SAM Local as the local emulator. The app must work locally (SAM Local) and
+switch to AWS API Gateway via environment variables only (no code changes).
 
 ────────────────────────────────────────
 OBJECTIVES (IMPLEMENT ALL)
@@ -41,6 +45,10 @@ A) App Shell + Navigation
 3) Add a subtle global info banner:
    - “AI‑assisted insights to support smarter business decisions.”
 4) Ensure mobile responsiveness, spacing, and polished UI.
+5) Add a small API status indicator in the header:
+   - Uses GET /health
+   - Shows “API Connected” (green) or “API Not Connected” (gray/red)
+   - Must not spam requests (cache result for ~30s)
 
 B) GitHub Link (Upper Right) — REQUIRED
 1) Add a GitHub icon button in the upper-right of the header.
@@ -69,9 +77,20 @@ D) Upload Data Page (CSV Upload + Validation)
 4) On “Analyze”:
    - Read CSV client-side
    - Call POST /generate-insights
-5) Persist last insights and filename in localStorage.
+   - Use language selector (EN/HI/MR)
+5) Persist last insights + filename + last selected language in localStorage.
+6) Handle errors nicely:
+   - Missing columns error
+   - Large file warning (non-blocking)
+   - API error states
 
 E) Dashboard Upgrade (Judge-Friendly)
+Assume /generate-insights returns a JSON containing at least:
+- products analyzed (or can be inferred from insights)
+- forecast array with yhat (and optionally yhat_lower/yhat_upper)
+- confidence scores (0-100) per insight or per product
+If response format varies, implement defensive parsing and show fallback UI.
+
 1) KPI cards:
    - Products analyzed
    - Alerts count
@@ -82,7 +101,7 @@ E) Dashboard Upgrade (Judge-Friendly)
 3) Forecast chart:
    - Use Recharts
    - Plot 7-day forecast (yhat)
-   - Confidence band if available
+   - Confidence band if available (yhat_lower/yhat_upper)
 4) Insight cards/table:
    - Confidence badges:
      Green > 80
@@ -95,20 +114,22 @@ E) Dashboard Upgrade (Judge-Friendly)
      - Demand reasoning
      - Reorder logic explanation
      - Confidence explanation
-   - Language must be merchant-friendly.
+   - Language must be merchant-friendly and simple.
+6) Add “Demo Mode” fallback:
+   - If no insights exist yet, show a friendly empty state with CTA → Upload Data.
 
 F) Copilot Chat Page (API Gateway Ready)
 1) Build chat UI:
    - Message list (user / assistant)
    - Input box
    - Language selector (EN / HI / MR)
-   - Show confidence and disclaimer text
+   - Show confidence (if returned) and a small disclaimer text:
+     “AI suggestions are probabilistic. Please verify before acting.”
 2) If /chat API is not available:
    - Show “Chat backend not connected yet.”
-   - UI must not crash
+   - UI must not crash, must still allow typing and show offline placeholder reply.
 3) Design chat calls to work via:
-   - Local FastAPI OR
-   - AWS API Gateway (same path)
+   - Local SAM URL OR AWS API Gateway URL (same path)
 
 G) Weekly Report Page
 1) Weekly report layout:
@@ -116,8 +137,10 @@ G) Weekly Report Page
    - Expected impact
    - Risks / alerts
 2) If backend endpoint is unavailable:
-   - Generate client-side from latest insights
+   - Generate client-side from latest stored insights
 3) Include confidence and explanation notes.
+4) Add “Export” button (minimal):
+   - Copy report as Markdown to clipboard (no PDF dependency)
 
 H) About Page + Footer
 1) About page must explain:
@@ -127,11 +150,11 @@ H) About Page + Footer
      Forecasting + Amazon Bedrock reasoning
    - Responsible AI:
      Confidence scoring + transparency
-   - Hackathon context
+   - Hackathon context (AWS AI for Bharat)
 2) Footer on all pages:
    - “© 2026 Bharat Brain Wave”
    - “Built for AWS AI for Bharat Hackathon”
-   - Optional GitHub link
+   - Optional GitHub link (only if env is set)
 
 I) Environment Configuration (API Gateway Support)
 Update frontend .env.example:
@@ -139,10 +162,10 @@ Update frontend .env.example:
 - VITE_API_BASE_URL=http://127.0.0.1:3000
 - VITE_GITHUB_URL=https://github.com/<username>/<repo>
 
-The app must work with:
-- Local FastAPI URL
-- Deployed AWS API Gateway URL
-  (no code changes, env switch only)
+Notes:
+- For local dev with SAM: VITE_API_BASE_URL points to sam local start-api host/port
+- For production: VITE_API_BASE_URL points to deployed API Gateway URL (stage included)
+- Must not hardcode API URLs in code. Env switch only.
 
 J) README.md Update (MANDATORY)
 Update README.md to include:
@@ -154,18 +177,41 @@ Update README.md to include:
      npm install
      copy .env.example .env
      npm run dev
+   - Backend (AWS SAM Local):
+     cd backend
+     pip install -r requirements.txt (if present)
+     sam build
+     sam local start-api --port 3000
+   - Verify:
+     curl http://127.0.0.1:3000/health
+
+3) Production Deploy (AWS):
    - Backend:
-     uvicorn app:app --reload --port 3000
-3) API Architecture Explanation:
-   - Local: Frontend → FastAPI
-   - Production: Frontend → AWS API Gateway → Backend
-4) Environment Variables:
+     sam deploy --guided
+     (document that this provisions API Gateway + Lambda and outputs an ApiUrl)
+   - Frontend:
+     Deploy to Netlify/Vercel/Static hosting; set VITE_API_BASE_URL to ApiUrl
+
+4) API Architecture Explanation:
+   - Local: Frontend → SAM Local (API Gateway emulation) → Lambda
+   - Production: Frontend → AWS API Gateway → Lambda (or container)
+
+5) Environment Variables:
    - VITE_API_BASE_URL
    - VITE_GITHUB_URL
-5) Security Note:
-   - npm audit warnings are dev-tool related
+
+6) Security Note:
    - No secrets committed
-6) 3-minute judge demo walkthrough
+   - Use AWS IAM roles/permissions for Bedrock access
+   - Mention billing safety recommendation (Budgets) and minimal AWS services used
+
+7) 3-minute judge demo walkthrough:
+   - Open Live URL
+   - Upload CSV → analyze
+   - Show dashboard KPIs + chart + “Why?”
+   - Show Weekly Report
+   - Show Copilot Chat (connected or graceful fallback)
+   - Show About page (responsible AI + AWS)
 
 ────────────────────────────────────────
 CONSTRAINTS
@@ -174,20 +220,28 @@ CONSTRAINTS
 - No breaking changes
 - Must work with npm run dev
 - Must not hardcode API URLs
-- Must not crash if chat/report APIs are missing
+- Must not crash if /chat or /weekly-report APIs are missing
 - Mobile responsive and polished
+- Use defensive parsing for backend response differences
+- Add loading skeletons and friendly empty/error states
 
 ────────────────────────────────────────
 ACCEPTANCE CHECKLIST
 ────────────────────────────────────────
-1) npm run dev works
-2) Header shows theme toggle + GitHub icon
-3) CSV upload works with validation and preview
-4) Dashboard shows KPIs, charts, badges, and Why drawer
-5) About page and footer are present
-6) README clearly explains Local vs AWS API Gateway usage
+1) npm run dev works (frontend)
+2) Header shows theme toggle + GitHub icon (env-driven)
+3) API status indicator works via GET /health
+4) CSV upload works with validation + preview + analyze
+5) Dashboard shows KPIs, charts, badges, and “Why?” drawer
+6) Copilot Chat does not crash without /chat
+7) Weekly Report works with backend OR client-side fallback
+8) About page + footer present
+9) README clearly explains Local (SAM) vs AWS API Gateway usage
 
 IMPLEMENT NOW:
-Apply all frontend and README changes.
-Run npm run dev and fix any issues.
-Summarize modified files and how to verify end-to-end.
+Apply all frontend and README changes. Ensure VITE_API_BASE_URL controls all API calls. Keep UI stable and judge-friendly.
+
+OUTPUT REQUIRED:
+- List of modified/added files
+- Quick verification steps (local SAM + production)
+- Screenshots not required, but ensure UI is polished
