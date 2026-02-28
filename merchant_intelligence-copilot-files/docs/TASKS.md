@@ -5,7 +5,7 @@
 This implementation plan breaks down the Merchant Intelligence Copilot into actionable coding tasks for a 48-hour hackathon MVP. The focus is on P0 (Must-Have) features using an AWS-only serverless stack (Lambda, Bedrock, S3, DynamoDB, API Gateway, Cognito).
 
 **Key Technologies**:
-- Backend: Python 3.11 (Lambda functions)
+- Backend: python 3.12 (Lambda functions)
 - Frontend: React 18 with TypeScript
 - ML: Prophet (time-series forecasting)
 - LLM: Amazon Bedrock (Claude 3 Haiku/Sonnet)

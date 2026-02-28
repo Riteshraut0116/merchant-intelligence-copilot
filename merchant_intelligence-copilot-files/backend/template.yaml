@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Bharat Brain Wave Merchant Copilot (API + Lambdas)
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 30
+    MemorySize: 512
+    Environment:
+      Variables:
+        AWS_REGION: ap-south-1
+        BEDROCK_MODEL_PRIMARY: amazon.nova-pro-v1:0
+        BEDROCK_MODEL_FAST: amazon.nova-lite-v1:0
+        BEDROCK_MODEL_BASELINE: amazon.nova-micro-v1:0
+        TEMPERATURE: "0.2"
+        MAX_TOKENS: "1200"
+        TOP_P: "0.9"
+        S3_BUCKET_NAME: merchant-intelligence-data-ritesh
+        DYNAMODB_TABLE_NAME: merchant-intelligence-metadata
+        APP_ENV: development
+        LOG_LEVEL: INFO
+
+Resources:
+  MerchantApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,X-Merchant-Id'"
+        AllowOrigin: "'*'"
+
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers.health.lambda_handler
+      Events:
+        Health:
+          Type: Api
+          Properties:
+            RestApiId: { "Ref": "MerchantApi" }
+            Path: /health
+            Method: GET
+
+  GenerateInsightsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers.generate_insights.lambda_handler
+      Timeout: 60
+      MemorySize: 1024
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+            Resource: "*"
+      Events:
+        Gen:
+          Type: Api
+          Properties:
+            RestApiId: { "Ref": "MerchantApi" }
+            Path: /generate-insights
+            Method: POST
+
+  ChatFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers.chat.lambda_handler
+      Timeout: 30
+      MemorySize: 512
+      Events:
+        Chat:
+          Type: Api
+          Properties:
+            RestApiId: { "Ref": "MerchantApi" }
+            Path: /chat
+            Method: POST
+
+  WeeklyReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers.weekly_report.lambda_handler
+      Timeout: 30
+      MemorySize: 512
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+            Resource: "*"
+      Events:
+        WeeklyReport:
+          Type: Api
+          Properties:
+            RestApiId: { "Ref": "MerchantApi" }
+            Path: /weekly-report
+            Method: POST

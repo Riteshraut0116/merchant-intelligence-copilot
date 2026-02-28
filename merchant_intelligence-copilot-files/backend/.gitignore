@@ -1,0 +1,44 @@
+# AWS SAM build artifacts
+.aws-sam/
+.aws-sam
+
+# SAM configuration (may contain sensitive info)
+samconfig.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Environment files (NEVER commit)
+.env
+.env.local
+.env.development
+.env.production
+src/.env
+src/.env.local
+
+# AWS credentials (NEVER commit)
+credentials
+aws-credentials
+.aws/credentials
+
+# Build artifacts
+*.zip
+*.tar.gz
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp

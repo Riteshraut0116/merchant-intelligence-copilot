@@ -1,0 +1,50 @@
+# =========================
+# Environment & Secrets (CRITICAL - NEVER COMMIT)
+# =========================
+.env
+.env.local
+.env.*.local
+**/aws-credentials
+**/credentials
+**/.aws/credentials
+secrets.json
+secrets.yaml
+*secret*
+*.pem
+*.key
+*.cert
+
+# =========================
+# Node / Frontend
+# =========================
+node_modules/
+dist/
+build/
+.vite/
+*.log
+
+# =========================
+# Python / Backend
+# =========================
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.aws-sam/
+.aws-sam
+samconfig.toml
+
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# =========================
+# Build artifacts
+# =========================
+*.zip
+*.tar.gz
