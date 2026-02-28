@@ -7,6 +7,6 @@ architecture = "x86_64"
 handler = "handlers.health.lambda_handler"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["HealthFunction", "GenerateInsightsFunction"]
+functions = ["HealthFunction", "GenerateInsightsFunction", "ChatFunction"]
 
 [layer_build_definitions]

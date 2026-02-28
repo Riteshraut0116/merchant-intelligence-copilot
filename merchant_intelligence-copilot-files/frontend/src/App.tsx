@@ -6,6 +6,7 @@ import { UploadData } from './pages/UploadData';
 import { Chat } from './pages/Chat';
 import { WeeklyReport } from './pages/WeeklyReport';
 import { About } from './pages/About';
+import { Settings } from './pages/Settings';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/upload" element={<UploadData />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/report" element={<WeeklyReport />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </Layout>

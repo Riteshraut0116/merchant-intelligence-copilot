@@ -1,10 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors;
+    @apply transition-colors duration-300;
+  }
+  
+  /* Light Mode (Default) */
+  .light body {
+    @apply bg-gray-50 text-gray-900;
+  }
+  
+  /* Dark Mode */
+  .dark body {
+    @apply bg-gray-900 text-white;
+  }
+  
+  /* Gradient Dark Theme */
+  .gradient-dark body {
+    @apply bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 text-white;
+  }
+  
+  /* Glassmorphism Theme */
+  .glassmorphism body {
+    @apply bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-pink-900 text-gray-900 dark:text-white;
+  }
+  
+  /* Minimal White Theme */
+  .minimal body {
+    @apply bg-white text-gray-900;
   }
 }
 
@@ -15,6 +42,11 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  
+  /* Page transitions */
+  .page-transition {
+    animation: fadeIn 0.3s ease-in-out;
   }
 }
 
@@ -55,6 +87,47 @@
   
   .dark .glow {
     box-shadow: 0 0 20px rgba(129, 140, 248, 0.5);
+  }
+  
+  /* Glassmorphism effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Theme-specific card styles */
+  .glassmorphism .card {
+    @apply glass;
+  }
+  
+  /* Smooth hover transitions */
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Accent colors */
+  .accent-pink {
+    @apply bg-gradient-to-r from-pink-500 to-rose-500;
+  }
+  
+  .accent-teal {
+    @apply bg-gradient-to-r from-teal-500 to-cyan-500;
+  }
+  
+  .accent-orange {
+    @apply bg-gradient-to-r from-orange-500 to-amber-500;
   }
 }
 
