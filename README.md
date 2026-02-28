@@ -43,13 +43,13 @@ Experience the Merchant Intelligence Copilot in action:
 - **Status**: ✅ Production Ready
 
 ### 📊 UI Dashboard Preview
-![Merchant Intelligence Copilot Dashboard](merchant_intelligence-copilot-files/screenshot.png)
+![Merchant Intelligence Copilot Dashboard](merchant_intelligence-copilot-files/sample-data/screenshot.png)
 
 **Features Showcase**: 
 📈 Real-time KPIs & Forecasts | 💬 Multilingual Chat Interface | 📋 AI-Generated Reports | ⚙️ 5 Beautiful Themes | 🌐 English, Hindi & Marathi Support
 
 ### 📺 Demo Video
-- **YouTube**: [Watch Demo](https://youtube.com/your-demo-video) 🎥
+- **Demo Video Link**: [Watch Demo](https://youtube.com/your-demo-video) 🎥
 - **Duration**: 5 minutes
 - **Highlights**: CSV upload, forecasting, chat interface, multilingual support
 
