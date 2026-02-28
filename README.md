@@ -33,6 +33,30 @@ Merchant Intelligence Copilot is an AI-powered decision assistant that transform
 
 ---
 
+## 🌐 Live Demo
+
+Experience the Merchant Intelligence Copilot in action:
+
+### 🚀 Deployed Application
+- **Frontend**: [Live Demo Link](https://your-frontend-url.netlify.app) 🌟
+- **Backend API**: [API Endpoint](https://your-api-gateway-url.execute-api.ap-south-1.amazonaws.com/prod) ⚡
+- **Status**: ✅ Production Ready
+
+### 📺 Demo Video
+- **YouTube**: [Watch Demo](https://youtube.com/your-demo-video) 🎥
+- **Duration**: 5 minutes
+- **Highlights**: CSV upload, forecasting, chat interface, multilingual support
+
+### 🧪 Try It Yourself
+1. Visit the live demo link above
+2. Upload sample data from `sample-data/msme_sales_90days.csv`
+3. Explore AI-powered insights in English, Hindi, or Marathi
+4. Chat with the copilot to ask business questions
+
+> **Note**: Replace the placeholder URLs above with your actual deployment links before submission.
+
+---
+
 ## ✨ Key Features
 
 - **Modern UI/UX**: Responsive design with light/dark theme toggle, mobile-friendly navigation
@@ -76,7 +100,7 @@ Machine learning is essential for demand forecasting because:
 Large Language Models transform raw forecasts into actionable intelligence:
 - **Natural Language Generation**: Convert numbers into merchant-friendly recommendations ("Order 50 kg Atta by Friday")
 - **Contextual Reasoning**: Explain "why" demand is changing (seasonality, trends, anomalies)
-- **Multilingual Support**: Claude 3 natively supports Hindi and Marathi for Bharat-first design
+- **Multilingual Support**: Amazon Nova models natively support Hindi and Marathi for Bharat-first design
 - **Conversational AI**: Enable low-tech merchants to ask questions in natural language, not dashboards
 - **Automated Reports**: Generate weekly action plans without manual analysis
 
@@ -97,78 +121,84 @@ merchant-intelligence-copilot/
 ├── README.md                          # Main documentation
 ├── .gitignore                         # Git ignore rules
 │
-├── docs/                              # Documentation
-│   ├── design.md                      # System design document
-│   ├── requirements.md                # Requirements specification
-│   ├── tasks.md                       # Implementation tasks
-│   ├── QUICKSTART.md                  # 5-minute quick start guide
-│   ├── INSTALLATION_GUIDE.md          # Detailed installation steps
-│   ├── VERIFICATION.md                # Testing checklist
-│   ├── IMPLEMENTATION_SUMMARY.md      # Technical implementation details
-│   └── FILES_CHANGED.md               # List of all modified files
-│
-├── backend/                           # AWS SAM Backend
-│   ├── template.yaml                  # SAM/CloudFormation template
-│   ├── requirements.txt               # Python dependencies
-│   ├── .env.example                   # Environment variables template
-│   └── src/                           # Lambda function source code
-│       ├── common/                    # Shared utilities
-│       │   ├── bedrock_nova.py        # Amazon Bedrock integration
-│       │   ├── config.py              # Configuration management
-│       │   ├── forecasting.py         # Prophet forecasting logic
-│       │   ├── insights.py            # Insight generation
-│       │   ├── responses.py           # API response formatting
-│       │   └── validators.py          # Input validation
-│       ├── handlers/                  # Lambda handlers
-│       │   ├── generate_insights.py   # POST /generate-insights
-│       │   └── health.py              # GET /health
-│       └── requirements.txt           # Lambda layer dependencies
-│
-├── frontend/                          # React + Vite Frontend
-│   ├── package.json                   # Node.js dependencies
-│   ├── vite.config.ts                 # Vite configuration
-│   ├── tailwind.config.js             # Tailwind CSS configuration
-│   ├── tsconfig.json                  # TypeScript configuration
-│   ├── .env.example                   # Environment variables template
-│   ├── index.html                     # HTML entry point
-│   └── src/                           # Source code
-│       ├── main.tsx                   # Application entry point
-│       ├── App.tsx                    # Root component with routing
-│       ├── styles.css                 # Global styles + animations
-│       ├── types.ts                   # TypeScript type definitions
-│       ├── vite-env.d.ts              # Vite environment types
-│       ├── hooks/                     # Custom React hooks
-│       │   ├── useTheme.ts            # Theme management
-│       │   └── useApiHealth.ts        # API health monitoring
-│       ├── components/                # Reusable components
-│       │   └── Layout.tsx             # App shell (header, nav, footer)
-│       ├── pages/                     # Page components
-│       │   ├── Dashboard.tsx          # Main dashboard with KPIs
-│       │   ├── UploadData.tsx         # CSV upload page
-│       │   ├── Chat.tsx               # Conversational copilot
-│       │   ├── WeeklyReport.tsx       # Weekly action plan
-│       │   └── About.tsx              # About page
-│       ├── lib/                       # Utilities
-│       │   └── api.ts                 # Axios API client
-│       └── i18n/                      # Internationalization
-│           └── index.ts               # i18next configuration
-│
-└── sample-data/                       # Sample datasets
-    └── msme_sales_90days.csv          # 90-day sales data for demo
+├── merchant_intelligence-copilot-files/
+│   ├── docs/                          # Documentation
+│   │   ├── DESIGN.md                  # System design document
+│   │   ├── REQUIREMENTS.md            # Requirements specification
+│   │   ├── TASKS.md                   # Implementation tasks
+│   │   ├── QUICKSTART.md              # 5-minute quick start guide
+│   │   ├── INSTALLATION_GUIDE.md      # Detailed installation steps
+│   │   ├── VERIFICATION.md            # Testing checklist
+│   │   ├── SETUP_AND_RUN.md           # Setup and testing guide
+│   │   └── README.md                  # Documentation index
+│   │
+│   ├── backend/                       # AWS SAM Backend
+│   │   ├── template.yaml              # SAM/CloudFormation template
+│   │   ├── requirements.txt           # Python dependencies
+│   │   ├── .env.example               # Environment variables template
+│   │   ├── .gitignore                 # Backend-specific ignores
+│   │   └── src/                       # Lambda function source code
+│   │       ├── common/                # Shared utilities
+│   │       │   ├── bedrock_nova.py    # Amazon Bedrock integration
+│   │       │   ├── config.py          # Configuration management
+│   │       │   ├── forecasting.py     # Prophet forecasting logic
+│   │       │   ├── insights.py        # Insight generation
+│   │       │   ├── responses.py       # API response formatting
+│   │       │   └── validators.py      # Input validation
+│   │       ├── handlers/              # Lambda handlers
+│   │       │   ├── chat.py            # POST /chat
+│   │       │   ├── generate_insights.py # POST /generate-insights
+│   │       │   ├── health.py          # GET /health
+│   │       │   └── weekly_report.py   # POST /weekly-report
+│   │       └── requirements.txt       # Lambda layer dependencies
+│   │
+│   └── frontend/                      # React + Vite Frontend
+│       ├── package.json               # Node.js dependencies
+│       ├── vite.config.ts             # Vite configuration
+│       ├── tailwind.config.js         # Tailwind CSS configuration
+│       ├── tsconfig.json              # TypeScript configuration
+│       ├── postcss.config.js          # PostCSS configuration
+│       ├── .env.example               # Environment variables template
+│       ├── .gitignore                 # Frontend-specific ignores
+│       ├── index.html                 # HTML entry point
+│       └── src/                       # Source code
+│           ├── main.tsx               # Application entry point
+│           ├── App.tsx                # Root component with routing
+│           ├── styles.css             # Global styles + animations
+│           ├── types.ts               # TypeScript type definitions
+│           ├── vite-env.d.ts          # Vite environment types
+│           ├── hooks/                 # Custom React hooks
+│           │   ├── useTheme.ts        # Theme management
+│           │   ├── useLanguage.ts     # Language management
+│           │   └── useApiHealth.ts    # API health monitoring
+│           ├── components/            # Reusable components
+│           │   └── Layout.tsx         # App shell (header, nav, footer)
+│           ├── pages/                 # Page components
+│           │   ├── Dashboard.tsx      # Main dashboard with KPIs
+│           │   ├── UploadData.tsx     # CSV upload page
+│           │   ├── Chat.tsx           # Conversational copilot
+│           │   ├── WeeklyReport.tsx   # Weekly action plan
+│           │   ├── Settings.tsx       # Theme and language settings
+│           │   └── About.tsx          # About page
+│           ├── lib/                   # Utilities
+│           │   └── api.ts             # Axios API client
+│           └── i18n/                  # Internationalization
+│               ├── index.ts           # i18next configuration
+│               └── translations.ts    # Translation dictionaries
 ```
 
 ## 📚 Documentation
 
-All documentation is located in the `docs/` folder:
+All documentation is located in the `merchant_intelligence-copilot-files/docs/` folder:
 
-- **[QUICKSTART.md](docs/QUICKSTART.md)** - Get running in 5 minutes
-- **[INSTALLATION_GUIDE.md](docs/INSTALLATION_GUIDE.md)** - Detailed installation steps for Node.js, Python, AWS SAM CLI
-- **[VERIFICATION.md](docs/VERIFICATION.md)** - Complete testing checklist
-- **[IMPLEMENTATION_SUMMARY.md](docs/IMPLEMENTATION_SUMMARY.md)** - Technical implementation details
-- **[FILES_CHANGED.md](docs/FILES_CHANGED.md)** - List of all modified/added files
-- **[design.md](docs/design.md)** - System architecture and design decisions
-- **[requirements.md](docs/requirements.md)** - Feature requirements and acceptance criteria
-- **[tasks.md](docs/tasks.md)** - Implementation task breakdown
+- **[QUICKSTART.md](merchant_intelligence-copilot-files/docs/QUICKSTART.md)** - Get running in 5 minutes
+- **[INSTALLATION_GUIDE.md](merchant_intelligence-copilot-files/docs/INSTALLATION_GUIDE.md)** - Detailed installation steps for Node.js, Python, AWS SAM CLI
+- **[VERIFICATION.md](merchant_intelligence-copilot-files/docs/VERIFICATION.md)** - Complete testing checklist
+- **[SETUP_AND_RUN.md](merchant_intelligence-copilot-files/docs/SETUP_AND_RUN.md)** - Setup and testing guide
+- **[DESIGN.md](merchant_intelligence-copilot-files/docs/DESIGN.md)** - System architecture and design decisions
+- **[REQUIREMENTS.md](merchant_intelligence-copilot-files/docs/REQUIREMENTS.md)** - Feature requirements and acceptance criteria
+- **[TASKS.md](merchant_intelligence-copilot-files/docs/TASKS.md)** - Implementation task breakdown
+- **[README.md](merchant_intelligence-copilot-files/docs/README.md)** - Documentation index
 
 ### High-Level System Design
 
@@ -186,9 +216,9 @@ The Merchant Intelligence Copilot follows a serverless, AI-native architecture b
 - All forecasts and anomalies stored in DynamoDB with TTL for cost optimization
 
 **Stage 3: LLM-Powered Reasoning & Presentation**
-- ChatHandler Lambda processes merchant queries using Amazon Bedrock (Claude 3 Haiku)
+- ChatHandler Lambda processes merchant queries using Amazon Bedrock (Nova Lite)
 - Retrieves merchant context (forecasts, anomalies) from DynamoDB and builds RAG prompts
-- ReportGenerator Lambda creates weekly action plans using Claude 3 Sonnet
+- ReportGenerator Lambda creates weekly action plans using Nova Pro
 - All LLM outputs include confidence scores and disclaimers
 
 **Data Storage**
@@ -212,9 +242,9 @@ The Merchant Intelligence Copilot follows a serverless, AI-native architecture b
 | Data Validator | Lambda (python 3.12) | Clean data, detect outliers, generate quality report |
 | Forecast Generator | Lambda (python 3.12) | Train Prophet models, generate forecasts with confidence intervals |
 | Anomaly Detector | Lambda (python 3.12) | Detect spikes, drops, slow-moving products |
-| Chat Handler | Lambda (python 3.12) | Process merchant queries, call Bedrock, return responses |
-| Report Generator | Lambda (python 3.12) | Generate weekly action plans using LLM |
-| Amazon Bedrock | Claude 3 Haiku/Sonnet | LLM reasoning, explanations, multilingual support |
+| Chat Handler | Lambda (python 3.12) | Process merchant queries, call Bedrock (Nova Lite), return responses |
+| Report Generator | Lambda (python 3.12) | Generate weekly action plans using LLM (Nova Pro) |
+| Amazon Bedrock | Nova Lite/Pro/Micro | LLM reasoning, explanations, multilingual support |
 | DynamoDB | NoSQL Database | Store forecasts, chat history, reports (with TTL) |
 | S3 | Object Storage | Store CSV files with lifecycle policies |
 | Cognito | Authentication | User authentication with JWT tokens |
@@ -240,7 +270,7 @@ The Merchant Intelligence Copilot follows a serverless, AI-native architecture b
 - AWS ElastiCache Redis (optional LLM caching)
 
 ### AI / ML
-- Amazon Bedrock (Claude 3 Haiku for chat, Claude 3 Sonnet for reports)
+- Amazon Bedrock (Nova Lite for chat, Nova Pro for reports, Nova Micro for simple tasks)
 - Prophet (Meta) for time-series forecasting
 - ARIMA (optional fallback for short-term predictions)
 - NumPy, Pandas (data processing)
@@ -307,7 +337,7 @@ The Merchant Intelligence Copilot follows a serverless, AI-native architecture b
 2. Frontend sends query to ChatHandler Lambda via API Gateway
 3. Lambda retrieves merchant context (forecasts, anomalies) from DynamoDB
 4. Builds RAG prompt with system instructions and merchant data
-5. Calls Amazon Bedrock (Claude 3 Haiku) with temperature=0.3 for factual responses
+5. Calls Amazon Bedrock (Nova Lite) with temperature=0.3 for factual responses
 6. Calculates confidence score based on data availability
 7. Returns response with explanation, confidence score, and disclaimer
 8. Frontend displays response in chat interface
@@ -315,7 +345,7 @@ The Merchant Intelligence Copilot follows a serverless, AI-native architecture b
 ### Step 7: Weekly Action Plan
 1. EventBridge rule triggers ReportGenerator Lambda every Monday 8 AM
 2. Lambda retrieves forecasts, anomalies, and inventory recommendations
-3. Builds comprehensive prompt for Bedrock (Claude 3 Sonnet)
+3. Builds comprehensive prompt for Bedrock (Nova Pro)
 4. Generates structured action plan with top 3 priorities and expected impact
 5. Stores report in DynamoDB and displays on dashboard
 
@@ -599,7 +629,7 @@ Displayed prominently throughout the system:
 ### Multilingual Support
 
 - **Languages**: English, Hindi, Marathi (expandable to Tamil, Telugu, Bengali)
-- **Native LLM Support**: Claude 3 natively generates Hindi/Marathi responses (no translation API needed)
+- **Native LLM Support**: Amazon Nova models natively generate Hindi/Marathi responses (no translation API needed)
 - **UI Localization**: react-i18next for static text translation
 - **Language Selection**: Dropdown in UI, preference stored in localStorage
 - **Fallback Logic**: Defaults to English if requested language fails
@@ -675,7 +705,7 @@ Displayed prominently throughout the system:
 ### Optimization Strategies
 
 **Bedrock Cost Control**:
-- Use Claude 3 Haiku (cheapest) for chat, Claude 3 Sonnet only for complex reports
+- Use Nova Lite (cheapest) for chat, Nova Pro only for complex reports
 - Limit context window to top 5 products (reduce tokens)
 - Set max_tokens=500 for chat, 1000 for reports
 - Cache frequent queries in ElastiCache (optional)

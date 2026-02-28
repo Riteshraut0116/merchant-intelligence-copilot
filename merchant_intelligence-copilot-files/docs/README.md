@@ -7,18 +7,15 @@ Welcome to the Merchant Intelligence Copilot documentation! This folder contains
 ### Getting Started
 - **[QUICKSTART.md](QUICKSTART.md)** - Get running in 5 minutes
 - **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** - Detailed installation steps for all prerequisites
+- **[SETUP_AND_RUN.md](SETUP_AND_RUN.md)** - Setup and testing guide
 
 ### Development
-- **[requirements.md](requirements.md)** - Feature requirements and acceptance criteria
-- **[design.md](design.md)** - System architecture and design decisions
-- **[tasks.md](tasks.md)** - Implementation task breakdown
+- **[REQUIREMENTS.md](REQUIREMENTS.md)** - Feature requirements and acceptance criteria
+- **[DESIGN.md](DESIGN.md)** - System architecture and design decisions
+- **[TASKS.md](TASKS.md)** - Implementation task breakdown
 
 ### Testing & Verification
 - **[VERIFICATION.md](VERIFICATION.md)** - Complete testing checklist for local and production
-- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Technical implementation details and changes
-
-### Reference
-- **[FILES_CHANGED.md](FILES_CHANGED.md)** - Complete list of all modified/added files
 
 ---
 
@@ -44,6 +41,15 @@ Welcome to the Merchant Intelligence Copilot documentation! This folder contains
 - Detailed troubleshooting
 - Environment variable setup
 
+### SETUP_AND_RUN.md
+**Purpose**: Detailed setup and testing guide  
+**Audience**: Developers, testers  
+**Contents**:
+- Backend and frontend setup
+- Testing procedures
+- New features testing
+- Troubleshooting guide
+
 ### VERIFICATION.md
 **Purpose**: Complete testing and verification checklist  
 **Audience**: QA, developers, deployment team  
@@ -54,26 +60,7 @@ Welcome to the Merchant Intelligence Copilot documentation! This folder contains
 - Production deployment verification
 - Acceptance criteria checklist
 
-### IMPLEMENTATION_SUMMARY.md
-**Purpose**: Technical overview of all changes  
-**Audience**: Technical reviewers, developers  
-**Contents**:
-- Files modified/added
-- Key features implemented
-- Technical highlights
-- Dependencies
-- Known limitations
-
-### FILES_CHANGED.md
-**Purpose**: Detailed list of all file changes  
-**Audience**: Code reviewers, version control  
-**Contents**:
-- Modified files with descriptions
-- New files with purposes
-- File tree structure
-- Lines of code statistics
-
-### requirements.md
+### REQUIREMENTS.md
 **Purpose**: Feature requirements and specifications  
 **Audience**: Product team, developers  
 **Contents**:
@@ -81,8 +68,9 @@ Welcome to the Merchant Intelligence Copilot documentation! This folder contains
 - Feature requirements
 - Acceptance criteria
 - User stories
+- Responsible AI requirements
 
-### design.md
+### DESIGN.md
 **Purpose**: System architecture and design  
 **Audience**: Architects, senior developers  
 **Contents**:
@@ -92,14 +80,14 @@ Welcome to the Merchant Intelligence Copilot documentation! This folder contains
 - Technology choices
 - AI/ML design decisions
 
-### tasks.md
+### TASKS.md
 **Purpose**: Implementation task breakdown  
 **Audience**: Development team, project managers  
 **Contents**:
 - Task list with priorities
 - Sub-tasks and dependencies
 - Implementation status
-- Time estimates
+- Testing requirements
 
 ---
 
@@ -107,14 +95,14 @@ Welcome to the Merchant Intelligence Copilot documentation! This folder contains
 
 ### For Judges/Evaluators
 1. Start with **[QUICKSTART.md](QUICKSTART.md)** to run the demo
-2. Review **[requirements.md](requirements.md)** for features
-3. Check **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** for technical details
+2. Review **[REQUIREMENTS.md](REQUIREMENTS.md)** for features
+3. Check **[DESIGN.md](DESIGN.md)** for technical details
 
 ### For Developers
 1. Follow **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** for setup
-2. Review **[design.md](design.md)** for architecture
+2. Review **[DESIGN.md](DESIGN.md)** for architecture
 3. Use **[VERIFICATION.md](VERIFICATION.md)** for testing
-4. Reference **[FILES_CHANGED.md](FILES_CHANGED.md)** for code changes
+4. Check **[SETUP_AND_RUN.md](SETUP_AND_RUN.md)** for testing new features
 
 ### For Deployment Team
 1. Check **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)** for prerequisites
@@ -124,8 +112,8 @@ Welcome to the Merchant Intelligence Copilot documentation! This folder contains
 ### For New Team Members
 1. Read main **README.md** in root folder
 2. Follow **[INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md)**
-3. Review **[design.md](design.md)** and **[requirements.md](requirements.md)**
-4. Check **[tasks.md](tasks.md)** for current work
+3. Review **[DESIGN.md](DESIGN.md)** and **[REQUIREMENTS.md](REQUIREMENTS.md)**
+4. Check **[TASKS.md](TASKS.md)** for current work
 
 ---
 
@@ -158,14 +146,13 @@ All documentation in this folder follows these standards:
 
 | Document | Last Updated | Version | Changes |
 |----------|-------------|---------|---------|
-| QUICKSTART.md | Feb 2026 | 1.0 | Initial version |
-| INSTALLATION_GUIDE.md | Feb 2026 | 1.0 | Initial version |
-| VERIFICATION.md | Feb 2026 | 1.0 | Initial version |
-| IMPLEMENTATION_SUMMARY.md | Feb 2026 | 1.0 | Initial version |
-| FILES_CHANGED.md | Feb 2026 | 1.0 | Initial version |
-| requirements.md | Feb 2026 | 1.0 | Initial version |
-| design.md | Feb 2026 | 1.0 | Initial version |
-| tasks.md | Feb 2026 | 1.0 | Initial version |
+| QUICKSTART.md | March 2026 | 1.0 | Initial version |
+| INSTALLATION_GUIDE.md | March 2026 | 1.0 | Initial version |
+| SETUP_AND_RUN.md | March 2026 | 1.0 | Initial version |
+| VERIFICATION.md | March 2026 | 1.0 | Initial version |
+| REQUIREMENTS.md | March 2026 | 1.0 | Initial version |
+| DESIGN.md | March 2026 | 1.0 | Initial version |
+| TASKS.md | March 2026 | 1.0 | Initial version |
 
 ---
 
@@ -174,8 +161,8 @@ All documentation in this folder follows these standards:
 1. **Start with QUICKSTART.md** if you want to run the app immediately
 2. **Use INSTALLATION_GUIDE.md** if you're setting up from scratch
 3. **Reference VERIFICATION.md** when testing or deploying
-4. **Check FILES_CHANGED.md** to understand what was modified
-5. **Read design.md** to understand architectural decisions
+4. **Check SETUP_AND_RUN.md** to test new features
+5. **Read DESIGN.md** to understand architectural decisions
 
 ---
 
