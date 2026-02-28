@@ -9,38 +9,61 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
-# Frontend environment files
+# Frontend environment files (NEVER commit .env files with secrets)
 frontend/.env
 frontend/.env.local
 frontend/.env.development
 frontend/.env.production
+frontend/.env.*.local
 
 # =========================
-# Python / Backend (FastAPI)
+# Python / Backend (AWS SAM + Lambda)
 # =========================
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.so
 
 # Virtual environment
 .venv/
 venv/
 ENV/
 env/
+.Python
 
 # Python test / cache
 .pytest_cache/
 .mypy_cache/
 .coverage
 htmlcov/
+*.cover
+.hypothesis/
 
-# Backend environment files
+# Backend environment files (NEVER commit .env files with secrets)
 backend/.env
 backend/.env.local
 backend/.env.development
 backend/.env.production
+backend/src/.env
+backend/src/.env.local
+
+# =========================
+# AWS SAM / CloudFormation
+# =========================
+.aws-sam/
+samconfig.toml
+.aws/
+
+# AWS credentials (NEVER commit credentials)
+**/aws-credentials
+**/credentials
+**/.aws/credentials
+
+# CloudFormation outputs
+**/cfn-outputs.json
 
 # =========================
 # OS / Editor
@@ -48,22 +71,84 @@ backend/.env.production
 # Windows
 Thumbs.db
 Desktop.ini
+*.lnk
 
 # macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
 
 # VS Code / IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*.swn
+.project
+.classpath
+.settings/
 
 # =========================
 # Logs & Temp files
 # =========================
 *.log
 *.tmp
+*.temp
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# =========================
+# Security & Secrets (CRITICAL - NEVER COMMIT)
+# =========================
+# Environment variables with secrets
+.env
+.env.local
+.env.*.local
+
+# AWS credentials
+credentials
+aws-credentials
+.aws/credentials
+
+# API keys and secrets
+secrets.json
+secrets.yaml
+*secret*
+*password*
+*token*
+*.pem
+*.key
+*.cert
+
+# =========================
+# Build artifacts
+# =========================
+*.zip
+*.tar.gz
+*.rar
+
+# =========================
+# Database
+# =========================
+*.db
+*.sqlite
+*.sqlite3
 
 # =========================
 # Misc
 # =========================
 .cache/
-``
+.parcel-cache/
+.next/
+.nuxt/
+.docusaurus/
+
+# Package manager lock files (optional - uncomment if needed)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

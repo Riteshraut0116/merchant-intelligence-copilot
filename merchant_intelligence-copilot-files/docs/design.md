@@ -237,7 +237,7 @@ src/
 
 **Purpose**: Process CSV file uploads and store in S3
 
-**Runtime**: Python 3.11
+**Runtime**: python 3.12
 **Memory**: 512 MB
 **Timeout**: 60 seconds
 
@@ -291,7 +291,7 @@ def lambda_handler(event, context):
 
 **Purpose**: Validate, clean, and preprocess CSV data
 
-**Runtime**: Python 3.11
+**Runtime**: python 3.12
 **Memory**: 1024 MB
 **Timeout**: 120 seconds
 
@@ -370,7 +370,7 @@ def lambda_handler(event, context):
 
 **Purpose**: Generate demand forecasts using time-series ML models
 
-**Runtime**: Python 3.11
+**Runtime**: python 3.12
 **Memory**: 2048 MB (ML models require more memory)
 **Timeout**: 300 seconds (5 minutes)
 
@@ -462,7 +462,7 @@ def lambda_handler(event, context):
 
 **Purpose**: Detect demand spikes, drops, and slow-moving products
 
-**Runtime**: Python 3.11
+**Runtime**: python 3.12
 **Memory**: 1024 MB
 **Timeout**: 120 seconds
 
@@ -532,7 +532,7 @@ def lambda_handler(event, context):
 
 **Purpose**: Process Copilot chat queries using Amazon Bedrock
 
-**Runtime**: Python 3.11
+**Runtime**: python 3.12
 **Memory**: 512 MB
 **Timeout**: 30 seconds
 
@@ -638,7 +638,7 @@ def calculate_confidence(context, query):
 
 **Purpose**: Generate weekly action plans using LLM
 
-**Runtime**: Python 3.11
+**Runtime**: python 3.12
 **Memory**: 512 MB
 **Timeout**: 60 seconds
 
