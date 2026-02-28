@@ -13,10 +13,12 @@ This document confirms that the Merchant Intelligence Copilot project is ready t
 ### 2. .gitignore Configuration ✅
 - [x] Created comprehensive `.gitignore` in root folder
 - [x] Updated `.gitignore` in merchant_intelligence-copilot-files folder
-- [x] Added AWS SAM specific ignores (.aws-sam/, samconfig.toml)
+- [x] Created `.gitignore` in backend folder
+- [x] Added AWS SAM specific ignores (`.aws-sam/`, `.aws-sam`, `samconfig.toml`)
 - [x] Added security-critical ignores (credentials, secrets, .env files)
 - [x] Added OS and editor specific ignores
 - [x] Added build artifacts ignores
+- [x] Both `.aws-sam/` and `.aws-sam` formats included for complete coverage
 
 ### 3. Security Audit ✅
 - [x] No `.env` files with actual values in repository
@@ -106,9 +108,17 @@ git status
 **Check that these are NOT listed:**
 - ❌ `.env` files (only `.env.example` should be there)
 - ❌ `node_modules/` folder
-- ❌ `.aws-sam/` folder
+- ❌ `.aws-sam/` folder (AWS SAM build artifacts)
+- ❌ `samconfig.toml` file (may contain AWS account info)
 - ❌ AWS credentials
 - ❌ Any files with secrets
+
+**If you see `.aws-sam/` in git status:**
+```bash
+# Remove it from git tracking
+git rm -r --cached .aws-sam
+# Verify .gitignore includes both .aws-sam/ and .aws-sam
+```
 
 ### Step 4: Commit
 ```bash

@@ -54,6 +54,7 @@ backend/src/.env.local
 # AWS SAM / CloudFormation
 # =========================
 .aws-sam/
+.aws-sam
 samconfig.toml
 .aws/
 

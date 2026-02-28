@@ -31,6 +31,7 @@ __pycache__/
 .venv/
 venv/
 .aws-sam/
+.aws-sam
 samconfig.toml
 
 # =========================
