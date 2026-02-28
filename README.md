@@ -321,70 +321,6 @@ The Merchant Intelligence Copilot follows a serverless, AI-native architecture b
 
 ---
 
-## 🖥️ Demo Walkthrough (For Judges)
-
-### Suggested 3-Minute Demo Flow
-
-**Minute 1: Problem & Solution (30 seconds)**
-- Explain MSME pain points (inventory wastage, revenue loss, no intelligence tools)
-- Introduce Merchant Intelligence Copilot as AI-powered decision assistant
-- Highlight Bharat-first design (low-cost, multilingual, conversational)
-
-**Minute 2: Live Demo (2 minutes)**
-
-1. **Live URL & Navigation (10 seconds)**
-   - Open deployed application
-   - Show modern UI with theme toggle and GitHub link
-   - Highlight API status indicator (green = connected)
-
-2. **CSV Upload (20 seconds)**
-   - Navigate to "Upload Data" page
-   - Show drag-and-drop interface
-   - Upload sample CSV with 90 days of sales data for 15 products
-   - Display data validation and preview (first 5 rows)
-   - Select language (Hindi/Marathi) and click "Analyze"
-
-3. **Dashboard Insights (40 seconds)**
-   - Show KPI cards: Products analyzed, Alerts count, Avg confidence, Top reorder item
-   - Select a product from dropdown to view 7-day forecast chart with confidence bands
-   - Highlight color-coded confidence badges (Green >80%, Yellow 60-80%, Red <60%)
-   - Click "Why?" button on a product to show explainability drawer:
-     - Demand reasoning
-     - Reorder logic explanation
-     - Confidence explanation
-   - Show anomaly alerts with severity badges
-
-4. **Weekly Report (20 seconds)**
-   - Navigate to "Weekly Report" page
-   - Show top 3 priorities with expected impact
-   - Display risks and alerts
-   - Click "Export" to copy report as Markdown to clipboard
-
-5. **Copilot Chat (20 seconds)**
-   - Navigate to "Copilot Chat" page
-   - Type query in Hindi: "इस हफ्ते कौन से उत्पाद ऑर्डर करें?"
-   - Show LLM response with confidence score
-   - Highlight disclaimer: "AI suggestions are probabilistic. Please verify before acting."
-   - If /chat endpoint not available, show graceful fallback message
-
-6. **About Page (10 seconds)**
-   - Navigate to "About" page
-   - Highlight responsible AI features:
-     - Confidence scoring
-     - Explainability
-     - Disclaimers
-   - Show hackathon context and cost efficiency (₹37/merchant/month)
-
-**Minute 3: Technical Architecture & Impact (30 seconds)**
-- Explain AWS-native architecture:
-  - Local: Frontend → SAM Local (API Gateway emulation) → Lambda
-  - Production: Frontend → AWS API Gateway → Lambda → Amazon Bedrock
-- Highlight environment variable switching (no code changes)
-- Mention scalability: Designed for 10,000+ MSMEs across India
-- Show footer: "Built for AWS AI for Bharat Hackathon"
-
----
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -860,59 +796,6 @@ Displayed prominently throughout the system:
 
 ---
 
-## 🏆 Hackathon Submission Checklist
-
-### MVP Readiness
-
-- [x] CSV upload and data validation pipeline functional
-- [x] Demand forecasting with Prophet (7-day and 30-day)
-- [x] Anomaly detection (spikes, drops, slow-moving products)
-- [x] Conversational Copilot chat with Amazon Bedrock
-- [x] Multilingual support (English, Hindi, Marathi)
-- [x] Confidence scoring on all AI outputs
-- [x] Explainability ("Why?" for every recommendation)
-- [x] Disclaimers on dashboard, chat, and reports
-- [x] Weekly action plan generation
-- [x] Mobile-responsive React frontend
-
-### Demo Readiness
-
-- [x] Sample CSV data (90 days, 15 products) prepared
-- [x] Demo user account created in Cognito
-- [x] 3-minute demo script finalized
-- [x] Backup demo video recorded (5 minutes)
-- [x] All Lambda functions tested end-to-end
-- [x] Frontend deployed to S3 + CloudFront
-- [x] API Gateway endpoints tested with Postman
-
-### Documentation Completeness
-
-- [x] README.md with architecture, setup, and demo walkthrough
-- [x] Requirements document (problem, features, acceptance criteria)
-- [x] Design document (architecture, AI design, cost optimization)
-- [x] Implementation tasks document (22 tasks with sub-tasks)
-- [x] SAM template (Infrastructure as Code)
-- [x] API documentation (endpoints, request/response formats)
-
-### Responsible AI Compliance
-
-- [x] Confidence scores displayed on all AI outputs
-- [x] Disclaimers on dashboard, chat, and reports
-- [x] Prompt safety validation (injection prevention)
-- [x] Output filtering (hallucination detection)
-- [x] Human-in-the-loop feedback (thumbs up/down)
-- [x] Bias mitigation testing across product categories
-
-### Bharat-First Validation
-
-- [x] CSV upload (no API integrations required)
-- [x] Multilingual UI and LLM outputs (Hindi, Marathi)
-- [x] Mobile-responsive design (tested on basic smartphones)
-- [x] Cost efficiency (₹37/merchant/month)
-- [x] Plain-language outputs (no technical jargon)
-
----
-
 ## 🚀 GitHub Setup & Deployment
 
 ### Pushing to GitHub
@@ -961,74 +844,6 @@ Displayed prominently throughout the system:
 - `node_modules/` folder
 - `.aws-sam/` build artifacts
 - Personal information
-
-### Repository Settings
-
-After pushing to GitHub:
-
-1. **Add Topics** (for discoverability)
-   - aws-hackathon
-   - ai-for-bharat
-   - msme
-   - machine-learning
-   - react
-   - aws-lambda
-   - amazon-bedrock
-
-2. **Update Repository Description**
-   - "AI-powered decision assistant for Indian MSMEs | AWS AI for Bharat Hackathon 2026"
-
-3. **Add Website URL** (after deployment)
-   - Your deployed frontend URL
-
-4. **Enable Issues** (for feedback)
-
----
-
-## 👥 Team
-
-**Team Name:** Bharat Brain Wave  
-**Team Lead:** Ritesh Raut  
-**Hackathon:** AWS AI for Bharat Hackathon  
-**Theme:** AI for Retail, Commerce & Market Intelligence
-
----
-
-## 📄 License
-
-This project is submitted for the AWS AI for Bharat Hackathon. All rights reserved by Team Bharat Brain Wave.
-
----
-
-## 🙏 Acknowledgments
-
-- AWS for hosting the AI for Bharat Hackathon
-- Meta for the Prophet forecasting library
-- Anthropic for Claude 3 models via Amazon Bedrock
-- Indian MSME community for inspiring this solution
-
----
-
-## 👤 Author
-
-**Ritesh Raut**  
-*Programmer Analyst, Cognizant*
-
-AI-powered decision copilot for Bharat’s MSME sellers 📊🤖
-
----
-
-### 🌐 Connect with me:
-<p align="left">
-<a href="https://github.com/Riteshraut0116" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/github.svg" alt="Riteshraut0116" height="30" width="40" /></a>
-<a href="https://linkedin.com/in/ritesh-raut-9aa4b71ba" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="ritesh-raut-9aa4b71ba" height="30" width="40" /></a>
-<a href="https://www.instagram.com/riteshraut1601/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg" alt="riteshraut1601" height="30" width="40" /></a>
-<a href="https://www.facebook.com/ritesh.raut.649321/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/facebook.svg" alt="ritesh.raut.649321" height="30" width="40" /></a>
-</p>
-
----
-
-**Built with ❤️ for Bharat MSMEs**
 
 ---
 
@@ -1090,18 +905,47 @@ For questions or issues:
 
 ---
 
+## 👥 Team
+
+**Team Name:** Bharat Brain Wave  
+**Team Lead:** Ritesh Raut  
+**Hackathon:** AWS AI for Bharat Hackathon  
+**Theme:** AI for Retail, Commerce & Market Intelligence
+
+---
+
 ## 📄 License
 
 This project is submitted for the AWS AI for Bharat Hackathon. All rights reserved by Team Bharat Brain Wave.
 
 ---
 
-**Last Updated**: February 2026  
-**Version**: 1.0.0  
-**Status**: Production Ready ✅
+## 🙏 Acknowledgments
 
+- AWS for hosting the AI for Bharat Hackathon
+- Meta for the Prophet forecasting library
+- Anthropic for Claude 3 models via Amazon Bedrock
+- Indian MSME community for inspiring this solution
 
+---
 
+## 👤 Author
 
+**Ritesh Raut**  
+*Programmer Analyst, Cognizant*
 
+AI-powered decision copilot for Bharat’s MSME sellers 📊🤖
 
+---
+
+### 🌐 Connect with me:
+<p align="left">
+<a href="https://github.com/Riteshraut0116" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/github.svg" alt="Riteshraut0116" height="30" width="40" /></a>
+<a href="https://linkedin.com/in/ritesh-raut-9aa4b71ba" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="ritesh-raut-9aa4b71ba" height="30" width="40" /></a>
+<a href="https://www.instagram.com/riteshraut1601/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg" alt="riteshraut1601" height="30" width="40" /></a>
+<a href="https://www.facebook.com/ritesh.raut.649321/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/facebook.svg" alt="ritesh.raut.649321" height="30" width="40" /></a>
+</p>
+
+---
+
+**Built with ❤️ for Bharat MSMEs**
