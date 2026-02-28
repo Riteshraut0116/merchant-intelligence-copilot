@@ -42,6 +42,12 @@ Experience the Merchant Intelligence Copilot in action:
 - **Backend API**: [API Endpoint](https://your-api-gateway-url.execute-api.ap-south-1.amazonaws.com/prod) ⚡
 - **Status**: ✅ Production Ready
 
+### 📊 UI Dashboard Preview
+![Merchant Intelligence Copilot Dashboard](merchant_intelligence-copilot-files/screenshot.png)
+
+**Features Showcase**: 
+📈 Real-time KPIs & Forecasts | 💬 Multilingual Chat Interface | 📋 AI-Generated Reports | ⚙️ 5 Beautiful Themes | 🌐 English, Hindi & Marathi Support
+
 ### 📺 Demo Video
 - **YouTube**: [Watch Demo](https://youtube.com/your-demo-video) 🎥
 - **Duration**: 5 minutes
@@ -52,6 +58,7 @@ Experience the Merchant Intelligence Copilot in action:
 2. Upload sample data from `sample-data/msme_sales_90days.csv`
 3. Explore AI-powered insights in English, Hindi, or Marathi
 4. Chat with the copilot to ask business questions
+5. Switch themes and languages in Settings
 
 > **Note**: Replace the placeholder URLs above with your actual deployment links before submission.
 
