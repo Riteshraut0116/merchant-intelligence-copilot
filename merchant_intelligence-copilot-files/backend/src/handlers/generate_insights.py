@@ -41,11 +41,14 @@ def lambda_handler(event, context):
     for c in ["quantity_sold", "price", "revenue"]:
         df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0)
     
-    # Remove outliers using Z-score (threshold > 3)
-    from scipy import stats
-    for col in ["quantity_sold", "price"]:
-        z_scores = np.abs(stats.zscore(df[col]))
-        df = df[z_scores < 3]
+    # Remove extreme outliers using Z-score (threshold > 4) - more lenient
+    # Only remove outliers if we have enough data
+    if len(df) > 50:
+        from scipy import stats
+        for col in ["quantity_sold", "price"]:
+            if df[col].std() > 0:  # Only if there's variation
+                z_scores = np.abs(stats.zscore(df[col]))
+                df = df[z_scores < 4]  # Changed from 3 to 4 for more lenient filtering
 
     results = {"products": [], "disclaimer": DISCLAIMER}
     lang = payload.get("language", "en")
@@ -55,45 +58,50 @@ def lambda_handler(event, context):
         p = df[df["product_name"] == product].copy()
         daily = p.groupby("date", as_index=False)["quantity_sold"].sum()
         
-        # Skip products with insufficient data
-        if len(daily) < 14:
+        # Skip products with insufficient data (need at least 7 days)
+        if len(daily) < 7:
             continue
         
-        # Generate forecast using Prophet (with moving average fallback)
-        forecast30, conf = prophet_forecast(
-            daily.rename(columns={"date": "date", "quantity_sold": "quantity_sold"}),
-            days=30
-        )
-        forecast7 = forecast30[:7]
-        
-        # Detect anomalies
-        anomalies = detect_anomalies(p)
-        
-        # Generate reorder recommendation
-        reorder_qty, urgency = reorder_recommendation(forecast7)
-        
-        # Price optimization hint
-        price_hint = simple_price_hint(p)
-        
-        # Generate demand reasoning (rule-based baseline)
-        demand_reasoning = generate_demand_reasoning(p, forecast7, anomalies)
-        
-        # Skip LLM explanation for speed - use rule-based reasoning instead
-        llm_explanation = None
-        
-        results["products"].append({
-            "product_name": product,
-            "forecast": forecast7,
-            "forecast_30d": forecast30,
-            "confidence_score": conf,
-            "anomalies": anomalies,
-            "reorder": {"quantity": reorder_qty, "urgency": urgency},
-            "price_hint": price_hint,
-            "demand_reasoning": demand_reasoning,
-            "llm_explanation": llm_explanation,
-            "reorder_logic": f"Recommended quantity: {reorder_qty} units. Based on 7-day forecast ({sum([f['yhat'] for f in forecast7]):.1f} units) plus 20% safety stock.",
-            "confidence_explanation": f"Confidence score of {conf}% based on forecast accuracy, data quality ({len(daily)} days of history), and prediction interval width."
-        })
+        try:
+            # Generate forecast using Prophet (with moving average fallback)
+            forecast30, conf = prophet_forecast(
+                daily.rename(columns={"date": "date", "quantity_sold": "quantity_sold"}),
+                days=30
+            )
+            forecast7 = forecast30[:7]
+            
+            # Detect anomalies
+            anomalies = detect_anomalies(p)
+            
+            # Generate reorder recommendation
+            reorder_qty, urgency = reorder_recommendation(forecast7)
+            
+            # Price optimization hint
+            price_hint = simple_price_hint(p)
+            
+            # Generate demand reasoning (rule-based baseline)
+            demand_reasoning = generate_demand_reasoning(p, forecast7, anomalies)
+            
+            # Skip LLM explanation for speed - use rule-based reasoning instead
+            llm_explanation = None
+            
+            results["products"].append({
+                "product_name": product,
+                "forecast": forecast7,
+                "forecast_30d": forecast30,
+                "confidence_score": conf,
+                "anomalies": anomalies,
+                "reorder": {"quantity": reorder_qty, "urgency": urgency},
+                "price_hint": price_hint,
+                "demand_reasoning": demand_reasoning,
+                "llm_explanation": llm_explanation,
+                "reorder_logic": f"Recommended quantity: {reorder_qty} units. Based on 7-day forecast ({sum([f['yhat'] for f in forecast7]):.1f} units) plus 20% safety stock.",
+                "confidence_explanation": f"Confidence score of {conf}% based on forecast accuracy, data quality ({len(daily)} days of history), and prediction interval width."
+            })
+        except Exception as e:
+            # Log error but continue processing other products
+            print(f"Error processing product {product}: {str(e)}")
+            continue
 
     # Skip LLM summary for speed - generate rule-based summary
     high_urgency = [p for p in results["products"] if p["reorder"]["urgency"] == "high"]

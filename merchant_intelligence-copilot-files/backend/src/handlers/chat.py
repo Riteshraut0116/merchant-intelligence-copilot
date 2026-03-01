@@ -71,8 +71,7 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
 def generate_llm_response(message: str, language: str, insights: Dict = None) -> str:
     """
-    Generate fast, context-aware responses with rule-based logic for common queries.
-    Only use LLM for complex questions.
+    Generate LLM-powered responses with business context.
     """
     import time
     start_time = time.time()
@@ -100,40 +99,8 @@ def generate_llm_response(message: str, language: str, insights: Dict = None) ->
     anomalies = [p for p in products if p.get('anomalies') and len(p['anomalies']) > 0]
     low_confidence = [p for p in products if p.get('confidence_score', 100) < 60]
     
-    # Fast rule-based responses for common questions with expanded keywords
-    
-    # Question: Which products to order / reorder
-    order_keywords = ['order', 'reorder', 'stock', 'buy', 'purchase', 'should i', 'which product', 'what product', 'need to order', 'this week', 'मागवावी', 'ऑर्डर', 'कौन से उत्पाद', 'कोणती उत्पादने']
-    if any(word in message_lower for word in order_keywords):
-        logger.info(f"Matched ORDER keywords (took {time.time() - start_time:.3f}s)")
-        return generate_reorder_response(high_urgency, medium_urgency, language)
-    
-    # Question: Top selling products
-    top_keywords = ['top', 'best', 'selling', 'popular', 'most', 'highest', 'leading', 'what are my', 'सबसे', 'सर्वाधिक', 'बिकने वाले', 'विक्री होणारी']
-    if any(word in message_lower for word in top_keywords):
-        logger.info(f"Matched TOP keywords (took {time.time() - start_time:.3f}s)")
-        return generate_top_products_response(products, language)
-    
-    # Question: Alerts / anomalies / spikes
-    alert_keywords = ['alert', 'anomaly', 'spike', 'unusual', 'strange', 'drop', 'demand', 'are there any', 'अलर्ट', 'वृद्धि', 'मांग', 'काही', 'आहे का']
-    if any(word in message_lower for word in alert_keywords):
-        logger.info(f"Matched ALERT keywords (took {time.time() - start_time:.3f}s)")
-        return generate_alerts_response(anomalies, language)
-    
-    # Question: Forecast / prediction
-    forecast_keywords = ['forecast', 'predict', 'future', 'next', 'expect', 'ahead', 'coming', 'पूर्वानुमान', 'अंदाज']
-    if any(word in message_lower for word in forecast_keywords):
-        logger.info(f"Matched FORECAST keywords (took {time.time() - start_time:.3f}s)")
-        return generate_forecast_response(products, language)
-    
-    # Question: Low confidence / data quality
-    confidence_keywords = ['confidence', 'accuracy', 'reliable', 'trust', 'quality', 'विश्वास', 'आत्मविश्वास']
-    if any(word in message_lower for word in confidence_keywords):
-        logger.info(f"Matched CONFIDENCE keywords (took {time.time() - start_time:.3f}s)")
-        return generate_confidence_response(low_confidence, products, language)
-    
-    # For complex questions, use LLM with optimized context
-    logger.info(f"No keyword match, using LLM (took {time.time() - start_time:.3f}s so far)")
+    # Use LLM for all queries with business context
+    logger.info(f"Using LLM for response (took {time.time() - start_time:.3f}s so far)")
     return generate_llm_complex_response(message, language, products, high_urgency, anomalies)
 
 
@@ -346,10 +313,9 @@ def generate_confidence_response(low_confidence: list, all_products: list, langu
 
 
 def generate_llm_complex_response(message: str, language: str, products: list, high_urgency: list, anomalies: list) -> str:
-    """Use fastest LLM (Nova Micro) for complex questions"""
-    from common.config import BEDROCK_MODEL_BASELINE  # Fastest model
+    """Use LLM with rich business context for intelligent responses"""
     
-    logger.info("Complex question detected, using Nova Micro for fast response")
+    logger.info("Generating LLM response with business context")
     
     lang_instruction = {
         'en': 'Respond in English',
@@ -357,16 +323,45 @@ def generate_llm_complex_response(message: str, language: str, products: list, h
         'mr': 'Respond in Marathi (मराठी)'
     }.get(language, 'Respond in English')
     
-    # Minimal context for fastest LLM response
-    context = f"Products: {len(products)}, High urgency: {len(high_urgency)}, Anomalies: {len(anomalies)}"
+    # Build rich context with product details
+    top_products = sorted(products, key=lambda p: sum([f.get('yhat', 0) for f in p.get('forecast', [])]), reverse=True)[:5]
     
-    system = f"""You are a business advisor for Indian MSME merchants. {lang_instruction}.
-Be very concise (2-3 sentences max), actionable, and use simple language."""
+    context_parts = [
+        f"Total products analyzed: {len(products)}",
+        f"High urgency reorders: {len(high_urgency)}",
+        f"Products with anomalies: {len(anomalies)}"
+    ]
     
-    user = f"{context}\n\nQuestion: {message}\n\nProvide a brief answer."
+    if high_urgency:
+        context_parts.append(f"\nHigh priority reorders: {', '.join([p['product_name'] + f' ({p['reorder']['quantity']} units)' for p in high_urgency[:3]])}")
+    
+    if anomalies:
+        context_parts.append(f"\nProducts with alerts: {', '.join([p['product_name'] for p in anomalies[:3]])}")
+    
+    context_parts.append(f"\nTop selling products (7-day forecast): {', '.join([p['product_name'] + f' ({sum([f.get('yhat', 0) for f in p.get('forecast', [])]):.0f} units)' for p in top_products[:3]])}")
+    
+    context = "\n".join(context_parts)
+    
+    system = f"""You are an AI business advisor for Indian MSME merchants, specializing in inventory management and demand forecasting.
+
+{lang_instruction}. Be conversational, helpful, and provide actionable insights.
+
+Guidelines:
+- Give specific, actionable recommendations
+- Use emojis appropriately (📦 for orders, 🔝 for top products, ⚠️ for alerts, 📊 for forecasts)
+- Keep responses concise but informative (3-5 sentences)
+- Focus on business impact and next steps
+- Use simple language suitable for small business owners"""
+    
+    user = f"""Business Context:
+{context}
+
+Merchant Question: {message}
+
+Provide a helpful, actionable response based on the data."""
     
     try:
-        response = nova_converse(BEDROCK_MODEL_BASELINE, system, user)  # Using fastest model
+        response = nova_converse(BEDROCK_MODEL_FAST, system, user)
         return response
     except Exception as e:
         logger.error(f"LLM generation failed: {str(e)}")
