@@ -19,23 +19,35 @@ def prophet_forecast(df: pd.DataFrame, days=30):
         prophet_df = prophet_df.rename(columns={"date": "ds", "quantity_sold": "y"})
         prophet_df = prophet_df[["ds", "y"]].sort_values("ds")
         
-        # Need at least 30 days for Prophet
-        if len(prophet_df) < 30:
+        # Use moving average for small datasets (< 14 days)
+        if len(prophet_df) < 14:
             return moving_average_forecast(df, days)
         
-        # Initialize Prophet with OPTIMIZED settings for speed
-        model = Prophet(
-            daily_seasonality=False,
-            weekly_seasonality=True,
-            yearly_seasonality=False,  # Disabled for speed
-            interval_width=0.8,
-            changepoint_prior_scale=0.05,
-            mcmc_samples=0,  # Disable MCMC for speed
-            uncertainty_samples=100  # Reduced from default 1000
-        )
+        # For datasets between 14-30 days, use simplified Prophet
+        if len(prophet_df) < 30:
+            model = Prophet(
+                daily_seasonality=False,
+                weekly_seasonality=False,  # Disable for small datasets
+                yearly_seasonality=False,
+                interval_width=0.8,
+                changepoint_prior_scale=0.01,  # Less sensitive for small data
+                mcmc_samples=0,
+                uncertainty_samples=50  # Reduced for speed
+            )
+        else:
+            # Full Prophet for larger datasets
+            model = Prophet(
+                daily_seasonality=False,
+                weekly_seasonality=True,
+                yearly_seasonality=False,
+                interval_width=0.8,
+                changepoint_prior_scale=0.05,
+                mcmc_samples=0,
+                uncertainty_samples=100
+            )
         
         # Fit model with reduced iterations
-        model.fit(prophet_df, algorithm='Newton')  # Faster than default LBFGS
+        model.fit(prophet_df, algorithm='Newton')
         
         # Generate future dates
         future = model.make_future_dataframe(periods=days, freq='D')
@@ -73,22 +85,45 @@ def moving_average_forecast(df: pd.DataFrame, days=30):
     Used as fallback when Prophet is unavailable or fails.
     """
     # df columns: date, quantity_sold
-    s = df.sort_values("date").set_index("date")["quantity_sold"].asfreq("D").fillna(0)
-    ma7 = s.rolling(7).mean().fillna(s.mean())
-    base = ma7.iloc[-1]
+    s = df.sort_values("date").set_index("date")["quantity_sold"]
     
-    # Simple weekly seasonality factor from last 4 weeks
-    dow = s.index.dayofweek
-    season = s.groupby(dow).mean()
-    season = season / (season.mean() if season.mean() != 0 else 1.0)
+    # Fill missing dates with 0
+    s = s.asfreq("D", fill_value=0)
+    
+    # Calculate moving average (use shorter window for small datasets)
+    window = min(7, max(3, len(s) // 3))
+    ma = s.rolling(window, min_periods=1).mean()
+    base = ma.iloc[-1] if len(ma) > 0 else s.mean()
+    
+    # Handle case where base is 0 or NaN
+    if pd.isna(base) or base == 0:
+        base = s.mean() if s.mean() > 0 else 1.0
+    
+    # Simple weekly seasonality factor from available data
+    if len(s) >= 7:
+        dow = s.index.dayofweek
+        season = s.groupby(dow).mean()
+        season_mean = season.mean()
+        if season_mean > 0:
+            season = season / season_mean
+        else:
+            season = pd.Series(1.0, index=range(7))
+    else:
+        # No seasonality for very small datasets
+        season = pd.Series(1.0, index=range(7))
 
     future = []
     last_date = s.index.max()
     for i in range(1, days + 1):
         d = last_date + pd.Timedelta(days=i)
         yhat = float(max(0, base * season.get(d.dayofweek, 1.0)))
-        # Naive CI band
-        band = max(1.0, np.std(s.tail(28)) * 1.5)
+        
+        # Naive CI band based on historical std
+        if len(s) >= 7:
+            band = max(1.0, np.std(s.tail(min(28, len(s)))) * 1.5)
+        else:
+            band = max(1.0, yhat * 0.3)  # 30% band for small datasets
+            
         future.append({
             "ds": d.date().isoformat(),
             "yhat": round(yhat, 2),
@@ -100,5 +135,9 @@ def moving_average_forecast(df: pd.DataFrame, days=30):
     widths = [f["yhat_upper"] - f["yhat_lower"] for f in future]
     avg_pred = np.mean([f["yhat"] for f in future]) or 1.0
     conf = max(0, min(100, 100 - (np.mean(widths) / avg_pred * 100)))
+    
+    # Reduce confidence for small datasets
+    if len(s) < 14:
+        conf = conf * 0.7  # 30% penalty for small datasets
     
     return future, round(conf, 2)

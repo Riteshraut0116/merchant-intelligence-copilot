@@ -71,8 +71,7 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
 def generate_llm_response(message: str, language: str, insights: Dict = None) -> str:
     """
-    Generate fast, context-aware responses with rule-based logic for common queries.
-    Only use LLM for complex questions.
+    Generate LLM-powered responses with business context.
     """
     import time
     start_time = time.time()
@@ -90,8 +89,8 @@ def generate_llm_response(message: str, language: str, insights: Dict = None) ->
             products = insights.get('products', [])
     
     if not products:
-        logger.info(f"No products found, returning no data response (took {time.time() - start_time:.3f}s)")
-        return get_no_data_response(language)
+        logger.info(f"No products found, using LLM for general business advice (took {time.time() - start_time:.3f}s)")
+        return get_no_data_response(language, message)
     
     logger.info(f"Found {len(products)} products")
     
@@ -100,40 +99,8 @@ def generate_llm_response(message: str, language: str, insights: Dict = None) ->
     anomalies = [p for p in products if p.get('anomalies') and len(p['anomalies']) > 0]
     low_confidence = [p for p in products if p.get('confidence_score', 100) < 60]
     
-    # Fast rule-based responses for common questions with expanded keywords
-    
-    # Question: Which products to order / reorder
-    order_keywords = ['order', 'reorder', 'stock', 'buy', 'purchase', 'should i', 'which product', 'what product', 'need to order', 'this week', 'मागवावी', 'ऑर्डर', 'कौन से उत्पाद', 'कोणती उत्पादने']
-    if any(word in message_lower for word in order_keywords):
-        logger.info(f"Matched ORDER keywords (took {time.time() - start_time:.3f}s)")
-        return generate_reorder_response(high_urgency, medium_urgency, language)
-    
-    # Question: Top selling products
-    top_keywords = ['top', 'best', 'selling', 'popular', 'most', 'highest', 'leading', 'what are my', 'सबसे', 'सर्वाधिक', 'बिकने वाले', 'विक्री होणारी']
-    if any(word in message_lower for word in top_keywords):
-        logger.info(f"Matched TOP keywords (took {time.time() - start_time:.3f}s)")
-        return generate_top_products_response(products, language)
-    
-    # Question: Alerts / anomalies / spikes
-    alert_keywords = ['alert', 'anomaly', 'spike', 'unusual', 'strange', 'drop', 'demand', 'are there any', 'अलर्ट', 'वृद्धि', 'मांग', 'काही', 'आहे का']
-    if any(word in message_lower for word in alert_keywords):
-        logger.info(f"Matched ALERT keywords (took {time.time() - start_time:.3f}s)")
-        return generate_alerts_response(anomalies, language)
-    
-    # Question: Forecast / prediction
-    forecast_keywords = ['forecast', 'predict', 'future', 'next', 'expect', 'ahead', 'coming', 'पूर्वानुमान', 'अंदाज']
-    if any(word in message_lower for word in forecast_keywords):
-        logger.info(f"Matched FORECAST keywords (took {time.time() - start_time:.3f}s)")
-        return generate_forecast_response(products, language)
-    
-    # Question: Low confidence / data quality
-    confidence_keywords = ['confidence', 'accuracy', 'reliable', 'trust', 'quality', 'विश्वास', 'आत्मविश्वास']
-    if any(word in message_lower for word in confidence_keywords):
-        logger.info(f"Matched CONFIDENCE keywords (took {time.time() - start_time:.3f}s)")
-        return generate_confidence_response(low_confidence, products, language)
-    
-    # For complex questions, use LLM with optimized context
-    logger.info(f"No keyword match, using LLM (took {time.time() - start_time:.3f}s so far)")
+    # Use LLM for all queries with business context
+    logger.info(f"Using LLM for response (took {time.time() - start_time:.3f}s so far)")
     return generate_llm_complex_response(message, language, products, high_urgency, anomalies)
 
 
@@ -346,10 +313,9 @@ def generate_confidence_response(low_confidence: list, all_products: list, langu
 
 
 def generate_llm_complex_response(message: str, language: str, products: list, high_urgency: list, anomalies: list) -> str:
-    """Use fastest LLM (Nova Micro) for complex questions"""
-    from common.config import BEDROCK_MODEL_BASELINE  # Fastest model
+    """Use LLM with rich business context for intelligent responses"""
     
-    logger.info("Complex question detected, using Nova Micro for fast response")
+    logger.info("Generating LLM response with business context")
     
     lang_instruction = {
         'en': 'Respond in English',
@@ -357,16 +323,45 @@ def generate_llm_complex_response(message: str, language: str, products: list, h
         'mr': 'Respond in Marathi (मराठी)'
     }.get(language, 'Respond in English')
     
-    # Minimal context for fastest LLM response
-    context = f"Products: {len(products)}, High urgency: {len(high_urgency)}, Anomalies: {len(anomalies)}"
+    # Build rich context with product details
+    top_products = sorted(products, key=lambda p: sum([f.get('yhat', 0) for f in p.get('forecast', [])]), reverse=True)[:5]
     
-    system = f"""You are a business advisor for Indian MSME merchants. {lang_instruction}.
-Be very concise (2-3 sentences max), actionable, and use simple language."""
+    context_parts = [
+        f"Total products analyzed: {len(products)}",
+        f"High urgency reorders: {len(high_urgency)}",
+        f"Products with anomalies: {len(anomalies)}"
+    ]
     
-    user = f"{context}\n\nQuestion: {message}\n\nProvide a brief answer."
+    if high_urgency:
+        context_parts.append(f"\nHigh priority reorders: {', '.join([p['product_name'] + f' ({p['reorder']['quantity']} units)' for p in high_urgency[:3]])}")
+    
+    if anomalies:
+        context_parts.append(f"\nProducts with alerts: {', '.join([p['product_name'] for p in anomalies[:3]])}")
+    
+    context_parts.append(f"\nTop selling products (7-day forecast): {', '.join([p['product_name'] + f' ({sum([f.get('yhat', 0) for f in p.get('forecast', [])]):.0f} units)' for p in top_products[:3]])}")
+    
+    context = "\n".join(context_parts)
+    
+    system = f"""You are an AI business advisor for Indian MSME merchants, specializing in inventory management and demand forecasting.
+
+{lang_instruction}. Be conversational, helpful, and provide actionable insights.
+
+Guidelines:
+- Give specific, actionable recommendations
+- Use emojis appropriately (📦 for orders, 🔝 for top products, ⚠️ for alerts, 📊 for forecasts)
+- Keep responses concise but informative (3-5 sentences)
+- Focus on business impact and next steps
+- Use simple language suitable for small business owners"""
+    
+    user = f"""Business Context:
+{context}
+
+Merchant Question: {message}
+
+Provide a helpful, actionable response based on the data."""
     
     try:
-        response = nova_converse(BEDROCK_MODEL_BASELINE, system, user)  # Using fastest model
+        response = nova_converse(BEDROCK_MODEL_FAST, system, user)
         return response
     except Exception as e:
         logger.error(f"LLM generation failed: {str(e)}")
@@ -402,11 +397,97 @@ You have {len(products)} products analyzed with {len(high_urgency)} high priorit
 तुमच्याकडे {len(products)} उत्पादने विश्लेषित आहेत ज्यात {len(high_urgency)} उच्च प्राधान्य पुन्हा ऑर्डर आणि {len(anomalies)} अलर्ट आहेत।"""
 
 
-def get_no_data_response(language: str) -> str:
-    """Response when no insights data is available"""
-    if language == 'en':
-        return "📊 To get personalized recommendations, please upload your sales data first. I'll analyze demand patterns and provide actionable insights."
-    elif language == 'hi':
-        return "📊 व्यक्तिगत सिफारिशें प्राप्त करने के लिए, कृपया पहले अपना बिक्री डेटा अपलोड करें। मैं मांग पैटर्न का विश्लेषण करूंगा और कार्रवाई योग्य अंतर्दृष्टि प्रदान करूंगा।"
-    else:  # Marathi
-        return "📊 वैयक्तिक शिफारसी मिळविण्यासाठी, कृपया प्रथम तुमचा विक्री डेटा अपलोड करा. मी मागणी पॅटर्नचे विश्लेषण करेन आणि कार्यवाही करण्यायोग्य अंतर्दृष्टी प्रदान करेन."
+def get_no_data_response(language: str, message: str) -> str:
+    """
+    Response when no insights data is available.
+    Uses LLM to answer general business questions.
+    """
+    logger.info("No insights data available, using LLM for general business advice")
+    
+    lang_instruction = {
+        'en': 'Respond in English',
+        'hi': 'Respond in Hindi (हिंदी)',
+        'mr': 'Respond in Marathi (मराठी)'
+    }.get(language, 'Respond in English')
+    
+    system = f"""You are an AI business advisor for Indian MSME (Micro, Small, and Medium Enterprises) merchants.
+
+{lang_instruction}. Be conversational, helpful, and provide practical business advice.
+
+Guidelines:
+- Provide general business advice for small merchants in India
+- Focus on inventory management, sales strategies, customer service, and business growth
+- Use simple language suitable for small business owners
+- Keep responses concise (3-5 sentences)
+- Use emojis appropriately to make responses friendly
+- If asked about specific product data, remind them to upload their sales data for personalized insights
+
+Topics you can help with:
+- Inventory management best practices
+- Pricing strategies
+- Customer retention
+- Business growth tips
+- Marketing for small businesses
+- Cash flow management
+- Seasonal planning"""
+    
+    user = f"""The merchant hasn't uploaded their sales data yet, so I don't have specific product information.
+
+Merchant Question: {message}
+
+Provide helpful general business advice. If the question requires specific data analysis, politely suggest they upload their sales data."""
+    
+    try:
+        response = nova_converse(BEDROCK_MODEL_FAST, system, user)
+        
+        # Add a gentle reminder about uploading data for personalized insights
+        if language == 'en':
+            response += "\n\n💡 Tip: Upload your sales data to get personalized insights and forecasts for your specific products!"
+        elif language == 'hi':
+            response += "\n\n💡 सुझाव: अपने विशिष्ट उत्पादों के लिए व्यक्तिगत अंतर्दृष्टि और पूर्वानुमान प्राप्त करने के लिए अपना बिक्री डेटा अपलोड करें!"
+        else:  # Marathi
+            response += "\n\n💡 टीप: तुमच्या विशिष्ट उत्पादनांसाठी वैयक्तिक अंतर्दृष्टी आणि अंदाज मिळविण्यासाठी तुमचा विक्री डेटा अपलोड करा!"
+        
+        return response
+        
+    except Exception as e:
+        logger.error(f"LLM generation failed for general query: {str(e)}")
+        # Fallback response
+        if language == 'en':
+            return """👋 Hello! I'm your AI business advisor for inventory management and demand forecasting.
+
+📊 To get started, please upload your sales data (CSV format with date, product_name, quantity_sold, price, revenue columns).
+
+I can help you with:
+• Demand forecasting and inventory planning
+• Reorder recommendations
+• Sales trend analysis
+• Price optimization suggestions
+
+Once you upload your data, I'll provide personalized insights for your business!"""
+        
+        elif language == 'hi':
+            return """👋 नमस्ते! मैं इन्वेंटरी प्रबंधन और मांग पूर्वानुमान के लिए आपका AI व्यवसाय सलाहकार हूं।
+
+📊 शुरू करने के लिए, कृपया अपना बिक्री डेटा अपलोड करें (CSV प्रारूप में date, product_name, quantity_sold, price, revenue कॉलम के साथ)।
+
+मैं आपकी मदद कर सकता हूं:
+• मांग पूर्वानुमान और इन्वेंटरी योजना
+• पुनः ऑर्डर सिफारिशें
+• बिक्री रुझान विश्लेषण
+• मूल्य अनुकूलन सुझाव
+
+एक बार जब आप अपना डेटा अपलोड कर देंगे, तो मैं आपके व्यवसाय के लिए व्यक्तिगत अंतर्दृष्टि प्रदान करूंगा!"""
+        
+        else:  # Marathi
+            return """👋 नमस्कार! मी इन्व्हेंटरी व्यवस्थापन आणि मागणी अंदाजासाठी तुमचा AI व्यवसाय सल्लागार आहे।
+
+📊 सुरुवात करण्यासाठी, कृपया तुमचा विक्री डेटा अपलोड करा (CSV स्वरूपात date, product_name, quantity_sold, price, revenue स्तंभांसह)।
+
+मी तुम्हाला मदत करू शकतो:
+• मागणी अंदाज आणि इन्व्हेंटरी नियोजन
+• पुन्हा ऑर्डर शिफारसी
+• विक्री ट्रेंड विश्लेषण
+• किंमत ऑप्टिमायझेशन सूचना
+
+एकदा तुम्ही तुमचा डेटा अपलोड केल्यावर, मी तुमच्या व्यवसायासाठी वैयक्तिक अंतर्दृष्टी प्रदान करेन!"""

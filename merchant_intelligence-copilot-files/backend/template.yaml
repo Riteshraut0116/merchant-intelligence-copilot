@@ -59,6 +59,7 @@ Resources:
             Action:
               - bedrock:InvokeModel
               - bedrock:InvokeModelWithResponseStream
+              - bedrock:Converse
             Resource: "*"
       Events:
         Gen:
@@ -75,6 +76,14 @@ Resources:
       Handler: handlers.chat.lambda_handler
       Timeout: 30
       MemorySize: 512
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+              - bedrock:Converse
+            Resource: "*"
       Events:
         Chat:
           Type: Api
@@ -96,6 +105,7 @@ Resources:
             Action:
               - bedrock:InvokeModel
               - bedrock:InvokeModelWithResponseStream
+              - bedrock:Converse
             Resource: "*"
       Events:
         WeeklyReport:
