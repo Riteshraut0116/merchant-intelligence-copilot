@@ -1,6 +1,13 @@
 import pandas as pd
 import numpy as np
-from scipy import stats
+
+def zscore(arr):
+    """Simple Z-score calculation without scipy"""
+    mean = np.mean(arr)
+    std = np.std(arr)
+    if std == 0:
+        return np.zeros_like(arr)
+    return (arr - mean) / std
 
 def detect_anomalies(product_df: pd.DataFrame):
     """
@@ -38,7 +45,7 @@ def detect_anomalies(product_df: pd.DataFrame):
     # Z-score outlier detection (last 7 days vs historical)
     if len(s) >= 28:
         try:
-            z_scores = np.abs(stats.zscore(s.tail(28)))
+            z_scores = np.abs(zscore(s.tail(28).values))
             recent_z = z_scores[-7:].mean()
             if recent_z > 2.5:
                 out.append({

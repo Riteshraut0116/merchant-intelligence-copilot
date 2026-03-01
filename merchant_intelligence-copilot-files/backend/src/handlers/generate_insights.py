@@ -42,9 +42,13 @@ def lambda_handler(event, context):
         df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0)
     
     # Remove outliers using Z-score (threshold > 3)
-    from scipy import stats
+    def zscore(arr):
+        mean = np.mean(arr)
+        std = np.std(arr)
+        return (arr - mean) / std if std > 0 else np.zeros_like(arr)
+    
     for col in ["quantity_sold", "price"]:
-        z_scores = np.abs(stats.zscore(df[col]))
+        z_scores = np.abs(zscore(df[col].values))
         df = df[z_scores < 3]
 
     results = {"products": [], "disclaimer": DISCLAIMER}
