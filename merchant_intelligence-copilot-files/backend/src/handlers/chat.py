@@ -7,7 +7,7 @@ import json
 import logging
 from typing import Dict, Any
 from common.responses import ok, bad
-from common.config import BEDROCK_MODEL_FAST
+from common.config import BEDROCK_MODEL_FAST, BEDROCK_MODEL_BASELINE, AWS_REGION
 from common.bedrock_nova import nova_converse
 from common.validators import validate_prompt_injection
 
@@ -369,7 +369,17 @@ Be very concise (2-3 sentences max), actionable, and use simple language."""
         response = nova_converse(BEDROCK_MODEL_BASELINE, system, user)  # Using fastest model
         return response
     except Exception as e:
-        logger.error(f"LLM generation failed: {str(e)}")
+        error_msg = str(e)
+        logger.error(f"LLM generation failed: {error_msg}")
+        
+        # Return error message for debugging
+        if "access denied" in error_msg.lower() or "AccessDeniedException" in error_msg:
+            return f"⚠️ AWS Bedrock Access Issue: {error_msg}\n\nPlease enable Bedrock in your AWS account and request access to Nova models in the {AWS_REGION} region."
+        elif "not found" in error_msg.lower() or "ResourceNotFoundException" in error_msg:
+            return f"⚠️ Model Not Available: {error_msg}\n\nThe Nova model may not be available in your region or account."
+        elif "credentials" in error_msg.lower():
+            return f"⚠️ AWS Credentials Issue: {error_msg}\n\nPlease check your AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY."
+        
         # Fallback to helpful menu
         if language == 'en':
             return f"""I can help you with:

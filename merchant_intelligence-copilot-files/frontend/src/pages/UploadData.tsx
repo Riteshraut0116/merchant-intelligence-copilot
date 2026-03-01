@@ -100,7 +100,8 @@ export function UploadData() {
             csv_text: csvText,
             language
           });
-
+          
+          // Store the response data
           localStorage.setItem('lastInsights', JSON.stringify(response.data));
           localStorage.setItem('lastFilename', file.name);
           localStorage.setItem('lastLanguage', language);
@@ -114,7 +115,9 @@ export function UploadData() {
             navigate('/', { replace: true, state: { refresh: Date.now() } });
           }, 100);
         } catch (err: any) {
-          setError(err?.response?.data?.message || t('errorInvalidCSV'));
+          const errorMsg = err?.response?.data?.message || err?.response?.data?.error || err?.message || t('errorInvalidCSV');
+          console.error('Upload error:', errorMsg, err);
+          setError(errorMsg);
         } finally {
           setLoading(false);
         }

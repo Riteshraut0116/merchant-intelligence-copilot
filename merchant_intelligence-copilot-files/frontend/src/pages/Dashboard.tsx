@@ -35,7 +35,23 @@ export function Dashboard() {
 
   const products = useMemo(() => {
     if (!insights) return [];
-    return insights.insights?.products || insights.products || [];
+    
+    // Handle multiple possible response structures
+    // Direct products array
+    if (Array.isArray(insights)) {
+      return insights;
+    }
+    // Nested: insights.insights.products
+    if (insights.insights && Array.isArray(insights.insights.products)) {
+      return insights.insights.products;
+    }
+    // Flat: insights.products
+    if (Array.isArray(insights.products)) {
+      return insights.products;
+    }
+    
+    console.warn('Unexpected insights structure:', insights);
+    return [];
   }, [insights, refreshKey]);
 
   const productsAnalyzed = products.length;

@@ -15,38 +15,41 @@ def detect_anomalies(product_df: pd.DataFrame):
     - Week-over-week change detection
     - Z-score outlier detection
     - Slow-moving product identification
+    Works with as little as 7 days of data.
     """
     s = product_df.sort_values("date")["quantity_sold"]
-    if len(s) < 14:
+    if len(s) < 7:
         return []
     
     out = []
     
-    # Week-over-week change detection
-    last7 = s.tail(7).sum()
-    prev7 = s.iloc[-14:-7].sum()
-    wow = ((last7 - prev7) / prev7 * 100) if prev7 > 0 else 0
+    # Week-over-week change detection (if we have 14+ days)
+    if len(s) >= 14:
+        last7 = s.tail(7).sum()
+        prev7 = s.iloc[-14:-7].sum()
+        wow = ((last7 - prev7) / prev7 * 100) if prev7 > 0 else 0
+        
+        if wow > 30:
+            out.append({
+                "type": "spike",
+                "change_percent": round(wow, 2),
+                "severity": "high" if wow > 50 else "medium",
+                "description": f"Demand increased {round(wow, 1)}% week-over-week"
+            })
+        elif wow < -30:
+            out.append({
+                "type": "drop",
+                "change_percent": round(wow, 2),
+                "severity": "high" if wow < -50 else "medium",
+                "description": f"Demand decreased {abs(round(wow, 1))}% week-over-week"
+            })
     
-    if wow > 30:
-        out.append({
-            "type": "spike",
-            "change_percent": round(wow, 2),
-            "severity": "high" if wow > 50 else "medium",
-            "description": f"Demand increased {round(wow, 1)}% week-over-week"
-        })
-    elif wow < -30:
-        out.append({
-            "type": "drop",
-            "change_percent": round(wow, 2),
-            "severity": "high" if wow < -50 else "medium",
-            "description": f"Demand decreased {abs(round(wow, 1))}% week-over-week"
-        })
-    
-    # Z-score outlier detection (last 7 days vs historical)
-    if len(s) >= 28:
+    # Z-score outlier detection (if we have 14+ days)
+    if len(s) >= 14:
         try:
-            z_scores = np.abs(zscore(s.tail(28).values))
-            recent_z = z_scores[-7:].mean()
+            recent_window = min(28, len(s))
+            z_scores = np.abs(zscore(s.tail(recent_window).values))
+            recent_z = z_scores[-min(7, len(s)):].mean()
             if recent_z > 2.5:
                 out.append({
                     "type": "outlier",
@@ -59,13 +62,15 @@ def detect_anomalies(product_df: pd.DataFrame):
     
     # Slow-moving product detection
     avg = s.mean()
-    if last7 < 0.5 * avg * 7 and avg > 0:
+    recent_days = min(7, len(s))
+    recent_avg = s.tail(recent_days).sum() / recent_days
+    if recent_avg < 0.5 * avg and avg > 0:
         out.append({
             "type": "slow_moving",
-            "current_velocity": round(last7 / 7, 2),
+            "current_velocity": round(recent_avg, 2),
             "avg_velocity": round(avg, 2),
             "severity": "medium",
-            "description": f"Sales velocity dropped to {round((last7/7)/avg*100, 1)}% of average"
+            "description": f"Sales velocity dropped to {round(recent_avg/avg*100, 1)}% of average"
         })
     
     return out

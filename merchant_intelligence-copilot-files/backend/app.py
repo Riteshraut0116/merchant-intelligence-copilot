@@ -80,6 +80,30 @@ def weekly_report_route():
         return '', 204
     return lambda_to_flask(weekly_report.lambda_handler)
 
+@app.route('/test-bedrock', methods=['GET'])
+def test_bedrock():
+    """Test Bedrock connectivity"""
+    try:
+        from src.common.bedrock_nova import nova_converse
+        from src.common.config import BEDROCK_MODEL_BASELINE
+        
+        response = nova_converse(
+            BEDROCK_MODEL_BASELINE,
+            "You are a helpful assistant.",
+            "Say hello in one sentence."
+        )
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Bedrock is working!',
+            'response': response
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
 @app.route('/', methods=['GET'])
 def root():
     return jsonify({
@@ -90,7 +114,8 @@ def root():
             'health': '/health',
             'generate_insights': '/generate-insights',
             'chat': '/chat',
-            'weekly_report': '/weekly-report'
+            'weekly_report': '/weekly-report',
+            'test_bedrock': '/test-bedrock'
         }
     })
 
