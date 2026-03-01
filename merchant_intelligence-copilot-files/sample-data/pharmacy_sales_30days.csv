@@ -1,0 +1,51 @@
+Date,Product_Name,Quantity_Sold,Price,Revenue
+2026-02-01,Paracetamol 500mg,85,12,1020
+2026-02-01,Cough Syrup 100ml,42,95,3990
+2026-02-01,Vitamin C Tablets,55,180,9900
+2026-02-01,Hand Sanitizer 200ml,68,75,5100
+2026-02-01,Face Mask Pack,95,120,11400
+2026-02-02,Paracetamol 500mg,90,12,1080
+2026-02-02,Cough Syrup 100ml,45,95,4275
+2026-02-02,Vitamin C Tablets,58,180,10440
+2026-02-02,Hand Sanitizer 200ml,72,75,5400
+2026-02-02,Face Mask Pack,100,120,12000
+2026-02-03,Paracetamol 500mg,95,12,1140
+2026-02-03,Cough Syrup 100ml,48,95,4560
+2026-02-03,Vitamin C Tablets,60,180,10800
+2026-02-03,Hand Sanitizer 200ml,75,75,5625
+2026-02-03,Face Mask Pack,105,120,12600
+2026-02-05,Paracetamol 500mg,100,12,1200
+2026-02-05,Cough Syrup 100ml,52,95,4940
+2026-02-05,Vitamin C Tablets,65,180,11700
+2026-02-05,Hand Sanitizer 200ml,80,75,6000
+2026-02-05,Face Mask Pack,110,120,13200
+2026-02-08,Paracetamol 500mg,105,12,1260
+2026-02-08,Cough Syrup 100ml,55,95,5225
+2026-02-08,Vitamin C Tablets,68,180,12240
+2026-02-08,Hand Sanitizer 200ml,85,75,6375
+2026-02-08,Face Mask Pack,115,120,13800
+2026-02-10,Paracetamol 500mg,110,12,1320
+2026-02-10,Cough Syrup 100ml,58,95,5510
+2026-02-10,Vitamin C Tablets,72,180,12960
+2026-02-10,Hand Sanitizer 200ml,88,75,6600
+2026-02-10,Face Mask Pack,120,120,14400
+2026-02-15,Paracetamol 500mg,115,12,1380
+2026-02-15,Cough Syrup 100ml,62,95,5890
+2026-02-15,Vitamin C Tablets,75,180,13500
+2026-02-15,Hand Sanitizer 200ml,92,75,6900
+2026-02-15,Face Mask Pack,125,120,15000
+2026-02-20,Paracetamol 500mg,120,12,1440
+2026-02-20,Cough Syrup 100ml,65,95,6175
+2026-02-20,Vitamin C Tablets,78,180,14040
+2026-02-20,Hand Sanitizer 200ml,95,75,7125
+2026-02-20,Face Mask Pack,130,120,15600
+2026-02-25,Paracetamol 500mg,125,12,1500
+2026-02-25,Cough Syrup 100ml,68,95,6460
+2026-02-25,Vitamin C Tablets,82,180,14760
+2026-02-25,Hand Sanitizer 200ml,98,75,7350
+2026-02-25,Face Mask Pack,135,120,16200
+2026-02-28,Paracetamol 500mg,130,12,1560
+2026-02-28,Cough Syrup 100ml,72,95,6840
+2026-02-28,Vitamin C Tablets,85,180,15300
+2026-02-28,Hand Sanitizer 200ml,100,75,7500
+2026-02-28,Face Mask Pack,140,120,16800

@@ -3,11 +3,16 @@ import numpy as np
 
 def prophet_forecast(df: pd.DataFrame, days=30):
     """
-    Prophet-based forecasting with seasonality detection.
+    Prophet-based forecasting with seasonality detection - OPTIMIZED for speed.
     Falls back to moving average if Prophet fails or insufficient data.
     """
     try:
         from prophet import Prophet
+        import logging
+        
+        # Suppress Prophet logging for speed
+        logging.getLogger('prophet').setLevel(logging.ERROR)
+        logging.getLogger('cmdstanpy').setLevel(logging.ERROR)
         
         # Prepare data for Prophet (requires 'ds' and 'y' columns)
         prophet_df = df.copy()
@@ -18,17 +23,19 @@ def prophet_forecast(df: pd.DataFrame, days=30):
         if len(prophet_df) < 30:
             return moving_average_forecast(df, days)
         
-        # Initialize Prophet with daily and weekly seasonality
+        # Initialize Prophet with OPTIMIZED settings for speed
         model = Prophet(
             daily_seasonality=False,
             weekly_seasonality=True,
-            yearly_seasonality=len(prophet_df) >= 365,
+            yearly_seasonality=False,  # Disabled for speed
             interval_width=0.8,
-            changepoint_prior_scale=0.05
+            changepoint_prior_scale=0.05,
+            mcmc_samples=0,  # Disable MCMC for speed
+            uncertainty_samples=100  # Reduced from default 1000
         )
         
-        # Fit model
-        model.fit(prophet_df)
+        # Fit model with reduced iterations
+        model.fit(prophet_df, algorithm='Newton')  # Faster than default LBFGS
         
         # Generate future dates
         future = model.make_future_dataframe(periods=days, freq='D')
