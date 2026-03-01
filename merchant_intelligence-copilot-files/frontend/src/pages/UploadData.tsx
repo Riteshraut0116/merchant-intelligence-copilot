@@ -22,6 +22,7 @@ export function UploadData() {
       return { valid: false, error: t('errorInvalidCSV') };
     }
 
+    // Normalize headers to lowercase for case-insensitive comparison
     const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
     const missingColumns = REQUIRED_COLUMNS.filter(col => !headers.includes(col));
     
@@ -103,8 +104,15 @@ export function UploadData() {
           localStorage.setItem('lastInsights', JSON.stringify(response.data));
           localStorage.setItem('lastFilename', file.name);
           localStorage.setItem('lastLanguage', language);
+          localStorage.setItem('lastAnalysisTime', Date.now().toString());
 
-          navigate('/');
+          // Trigger storage event for same-window refresh
+          window.dispatchEvent(new Event('storage'));
+          
+          // Force navigation with state to trigger refresh
+          setTimeout(() => {
+            navigate('/', { replace: true, state: { refresh: Date.now() } });
+          }, 100);
         } catch (err: any) {
           setError(err?.response?.data?.message || t('errorInvalidCSV'));
         } finally {
@@ -260,17 +268,20 @@ export function UploadData() {
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 animate-slide-up">
           <div className="flex items-center gap-3">
             <div className="animate-spin text-2xl">⚙️</div>
-            <div>
+            <div className="flex-1">
               <h3 className="font-semibold text-blue-800 dark:text-blue-200">
                 {t('analyzing')}
               </h3>
               <p className="text-sm text-blue-700 dark:text-blue-300">
                 {language === 'en' 
-                  ? 'Please wait while we analyze your data...'
+                  ? 'Analyzing your data with AI... This may take 10-30 seconds.'
                   : language === 'hi'
-                  ? 'कृपया प्रतीक्षा करें जब तक हम आपके डेटा का विश्लेषण करते हैं...'
-                  : 'कृपया प्रतीक्षा करा आम्ही तुमच्या डेटाचे विश्लेषण करत आहोत...'}
+                  ? 'AI के साथ आपके डेटा का विश्लेषण कर रहे हैं... इसमें 10-30 सेकंड लग सकते हैं।'
+                  : 'AI सह तुमच्या डेटाचे विश्लेषण करत आहोत... यास 10-30 सेकंद लागू शकतात.'}
               </p>
+              <div className="mt-2 w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
+                <div className="bg-blue-600 dark:bg-blue-400 h-2 rounded-full animate-pulse" style={{width: '70%'}}></div>
+              </div>
             </div>
           </div>
         </div>

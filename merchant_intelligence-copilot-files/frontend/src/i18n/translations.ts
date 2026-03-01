@@ -79,6 +79,8 @@ export const translations = {
     highPriorityReorders: 'High Priority Reorders',
     demandAnomalies: 'Demand Anomalies',
     priceOptimization: 'Price Optimization',
+    copy: 'Copy',
+    exportPDF: 'Export PDF',
     
     // Settings
     settingsTitle: 'Settings',
@@ -177,6 +179,8 @@ export const translations = {
     highPriorityReorders: 'उच्च प्राथमिकता पुनः ऑर्डर',
     demandAnomalies: 'मांग विसंगतियां',
     priceOptimization: 'मूल्य अनुकूलन',
+    copy: 'कॉपी',
+    exportPDF: 'PDF निर्यात',
     
     // Settings
     settingsTitle: 'सेटिंग्स',
@@ -275,6 +279,8 @@ export const translations = {
     highPriorityReorders: 'उच्च प्राधान्य पुन्हा ऑर्डर',
     demandAnomalies: 'मागणी विसंगती',
     priceOptimization: 'किंमत अनुकूलन',
+    copy: 'कॉपी',
+    exportPDF: 'PDF निर्यात',
     
     // Settings
     settingsTitle: 'सेटिंग्ज',

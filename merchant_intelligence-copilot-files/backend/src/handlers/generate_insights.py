@@ -26,6 +26,9 @@ def lambda_handler(event, context):
     except Exception as e:
         return bad(f"Failed to parse CSV: {str(e)}")
     
+    # Normalize column names to lowercase
+    df.columns = df.columns.str.strip().str.lower()
+    
     missing = validate_csv_columns(df.columns)
     if missing:
         return bad("Missing required columns", {"missing_columns": missing})
@@ -47,7 +50,7 @@ def lambda_handler(event, context):
     results = {"products": [], "disclaimer": DISCLAIMER}
     lang = payload.get("language", "en")
 
-    # Process each product
+    # Process each product - OPTIMIZED for speed
     for product in sorted(df["product_name"].unique()):
         p = df[df["product_name"] == product].copy()
         daily = p.groupby("date", as_index=False)["quantity_sold"].sum()
@@ -75,28 +78,12 @@ def lambda_handler(event, context):
         # Generate demand reasoning (rule-based baseline)
         demand_reasoning = generate_demand_reasoning(p, forecast7, anomalies)
         
-        # LLM-powered explainability for high-value insights
-        try:
-            if conf < 70 or len(anomalies) > 0 or urgency == "high":
-                system = f"You are a business advisor for Indian MSME merchants. Explain insights in {lang}. Be concise and actionable."
-                user = f"""Product: {product}
-Forecast confidence: {conf}%
-Anomalies: {json.dumps(anomalies)}
-Reorder: {reorder_qty} units ({urgency} urgency)
-Price hint: {json.dumps(price_hint)}
-
-Explain in 2-3 sentences why this product needs attention and what action to take."""
-                
-                llm_explanation = nova_converse(BEDROCK_MODEL_FAST, system, user)
-            else:
-                llm_explanation = None
-        except Exception as e:
-            llm_explanation = None
-            print(f"LLM explanation failed: {e}")
+        # Skip LLM explanation for speed - use rule-based reasoning instead
+        llm_explanation = None
         
         results["products"].append({
             "product_name": product,
-            "forecast": forecast7,  # Changed from forecast_7d to match frontend
+            "forecast": forecast7,
             "forecast_30d": forecast30,
             "confidence_score": conf,
             "anomalies": anomalies,
@@ -108,21 +95,31 @@ Explain in 2-3 sentences why this product needs attention and what action to tak
             "confidence_explanation": f"Confidence score of {conf}% based on forecast accuracy, data quality ({len(daily)} days of history), and prediction interval width."
         })
 
-    # Generate overall summary with LLM
-    system = f"You are a business advisor for Indian MSME merchants. Respond in {lang}. Be concise, actionable, and avoid jargon."
-    user = f"""Summarize the key actions for this merchant from the following insights.
-Return:
-1) Top 3 priorities (be specific about products)
-2) 1-line reason for each priority
-3) Mention any critical anomalies or low confidence items
-
-Insights JSON: {json.dumps(results['products'][:8], ensure_ascii=False)}
-"""
+    # Skip LLM summary for speed - generate rule-based summary
+    high_urgency = [p for p in results["products"] if p["reorder"]["urgency"] == "high"]
+    anomaly_products = [p for p in results["products"] if p["anomalies"]]
+    low_conf = [p for p in results["products"] if p["confidence_score"] < 60]
     
-    try:
-        summary = nova_converse(BEDROCK_MODEL_FAST, system, user)
-    except Exception as e:
-        summary = f"Summary unavailable (Bedrock error). Use dashboard insights directly. ({str(e)})"
+    if lang == 'en':
+        summary = f"Analysis complete: {len(results['products'])} products analyzed. "
+        if high_urgency:
+            summary += f"{len(high_urgency)} products need urgent reordering. "
+        if anomaly_products:
+            summary += f"{len(anomaly_products)} products show unusual patterns. "
+        if low_conf:
+            summary += f"{len(low_conf)} products have low forecast confidence."
+    elif lang == 'hi':
+        summary = f"विश्लेषण पूर्ण: {len(results['products'])} उत्पादों का विश्लेषण किया गया। "
+        if high_urgency:
+            summary += f"{len(high_urgency)} उत्पादों को तत्काल पुनः ऑर्डर की आवश्यकता है। "
+        if anomaly_products:
+            summary += f"{len(anomaly_products)} उत्पाद असामान्य पैटर्न दिखाते हैं। "
+    else:  # Marathi
+        summary = f"विश्लेषण पूर्ण: {len(results['products'])} उत्पादनांचे विश्लेषण केले. "
+        if high_urgency:
+            summary += f"{len(high_urgency)} उत्पादनांना तातडीने पुन्हा ऑर्डर आवश्यक आहे। "
+        if anomaly_products:
+            summary += f"{len(anomaly_products)} उत्पादने असामान्य पॅटर्न दर्शवतात। "
 
     # Data quality report
     quality_report = {

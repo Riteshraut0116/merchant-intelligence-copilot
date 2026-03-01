@@ -55,6 +55,9 @@ backend/src/.env.local
 # =========================
 .aws-sam/
 .aws-sam
+backend/.aws-sam/
+backend/.aws-sam
+**/aws-sam/
 samconfig.toml
 .aws/
 

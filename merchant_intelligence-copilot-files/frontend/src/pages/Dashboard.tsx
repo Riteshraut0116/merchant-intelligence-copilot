@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { InsightsData, Product } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
@@ -7,16 +7,36 @@ import { useLanguage } from '../hooks/useLanguage';
 export function Dashboard() {
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [explainProduct, setExplainProduct] = useState<Product | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { t } = useLanguage();
+  const location = useLocation();
+
+  // Force refresh when navigating from upload or when localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setRefreshKey(prev => prev + 1);
+    };
+    
+    // Refresh on navigation with state
+    if (location.state?.refresh) {
+      setRefreshKey(prev => prev + 1);
+    }
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [location]);
 
   const storedData = localStorage.getItem('lastInsights');
   const storedFilename = localStorage.getItem('lastFilename');
-  const insights: InsightsData | null = storedData ? JSON.parse(storedData) : null;
+  const insights: InsightsData | null = useMemo(() => 
+    storedData ? JSON.parse(storedData) : null, 
+    [storedData, refreshKey]
+  );
 
   const products = useMemo(() => {
     if (!insights) return [];
     return insights.insights?.products || insights.products || [];
-  }, [insights]);
+  }, [insights, refreshKey]);
 
   const productsAnalyzed = products.length;
   const alertsCount = products.filter(p => p.anomalies && p.anomalies.length > 0).length;

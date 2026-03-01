@@ -17,20 +17,28 @@ export function Chat() {
 
   const suggestions = {
     en: [
-      'What are my top selling products?',
       'Which products should I order this week?',
-      'Are there any demand spikes I should know about?'
+      'What are my top selling products?',
+      'Are there any demand spikes or alerts?'
     ],
     hi: [
-      'मेरे सबसे ज़्यादा बिकने वाले उत्पाद कौन से हैं?',
       'मुझे इस सप्ताह कौन से उत्पाद ऑर्डर करने चाहिए?',
-      'क्या कोई मांग में अचानक वृद्धि हुई है?'
+      'मेरे सबसे ज़्यादा बिकने वाले उत्पाद कौन से हैं?',
+      'क्या कोई मांग में अचानक वृद्धि या अलर्ट है?'
     ],
     mr: [
-      'माझी सर्वाधिक विक्री होणारी उत्पादने कोणती आहेत?',
       'या आठवड्यात मला कोणती उत्पादने मागवावी?',
-      'मागणीत काही अचानक वाढ झाली आहे का?'
+      'माझी सर्वाधिक विक्री होणारी उत्पादने कोणती आहेत?',
+      'मागणीत काही अचानक वाढ किंवा अलर्ट आहे का?'
     ]
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInput(suggestion);
+    // Auto-send the suggestion
+    setTimeout(() => {
+      handleSend();
+    }, 100);
   };
 
   const handleSend = async () => {
@@ -47,9 +55,14 @@ export function Chat() {
     setLoading(true);
 
     try {
+      // Get insights from localStorage for context
+      const storedInsights = localStorage.getItem('lastInsights');
+      const insights = storedInsights ? JSON.parse(storedInsights) : null;
+      
       const response = await api.post('/chat', {
         message: input,
-        language
+        language,
+        insights: insights
       });
 
       const assistantMessage: ChatMessage = {
@@ -150,7 +163,7 @@ export function Chat() {
               {suggestions[language].map((suggestion, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setInput(suggestion)}
+                  onClick={() => handleSuggestionClick(suggestion)}
                   className="px-4 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 hover:from-indigo-100 hover:to-purple-100 dark:hover:from-indigo-900/50 dark:hover:to-purple-900/50 rounded-lg text-gray-700 dark:text-gray-300 transition-all hover:scale-105 text-left border border-indigo-200 dark:border-indigo-800"
                 >
                   {suggestion}
