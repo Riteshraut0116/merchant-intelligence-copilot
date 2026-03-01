@@ -1,12 +1,12 @@
 import json, boto3, os
 from .config import AWS_REGION, TEMPERATURE, TOP_P, MAX_TOKENS
 
-# Initialize Bedrock client with credentials from environment
+# Initialize Bedrock client
+# Nova models are available in us-east-1, use that region for Bedrock
+# Lambda can be in any region
 br = boto3.client(
     "bedrock-runtime",
-    region_name=AWS_REGION,
-    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
+    region_name="us-east-1"  # Use us-east-1 for Bedrock Nova models
 )
 
 def nova_converse(model_id: str, system: str, user: str):

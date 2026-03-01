@@ -5,9 +5,11 @@ def env(key, default=None):
 
 # AWS_REGION is automatically set by Lambda, no need to override
 AWS_REGION = env("AWS_REGION", "ap-south-1")
-BEDROCK_MODEL_PRIMARY = env("BEDROCK_MODEL_PRIMARY","amazon.nova-pro-v1:0")
-BEDROCK_MODEL_FAST = env("BEDROCK_MODEL_FAST","amazon.nova-lite-v1:0")
-BEDROCK_MODEL_BASELINE = env("BEDROCK_MODEL_BASELINE","amazon.nova-micro-v1:0")
+
+# Use simple model IDs - Bedrock client will use us-east-1
+BEDROCK_MODEL_PRIMARY = env("BEDROCK_MODEL_PRIMARY", "amazon.nova-pro-v1:0")
+BEDROCK_MODEL_FAST = env("BEDROCK_MODEL_FAST", "amazon.nova-lite-v1:0")
+BEDROCK_MODEL_BASELINE = env("BEDROCK_MODEL_BASELINE", "amazon.nova-micro-v1:0")
 
 # Optimized for speed - reduced token limits
 TEMPERATURE = float(env("TEMPERATURE","0.2"))

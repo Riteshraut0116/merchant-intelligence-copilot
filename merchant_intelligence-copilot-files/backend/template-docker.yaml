@@ -1,0 +1,165 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Bharat Brain Wave Merchant Copilot (Docker-based deployment)
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        BEDROCK_MODEL_PRIMARY: amazon.nova-pro-v1:0
+        BEDROCK_MODEL_FAST: amazon.nova-lite-v1:0
+        BEDROCK_MODEL_BASELINE: amazon.nova-micro-v1:0
+        TEMPERATURE: "0.2"
+        MAX_TOKENS: "1200"
+        TOP_P: "0.9"
+        S3_BUCKET_NAME: merchant-intelligence-data-ritesh
+        DYNAMODB_TABLE_NAME: merchant-intelligence-metadata
+        APP_ENV: development
+        LOG_LEVEL: INFO
+
+Resources:
+  MerchantApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,Authorization,X-Merchant-Id'"
+        AllowOrigin: "'*'"
+
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      ImageConfig:
+        Command: ["handlers.health.lambda_handler"]
+      Events:
+        Health:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MerchantApi
+            Path: /health
+            Method: GET
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: health
+
+  GenerateInsightsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Timeout: 60
+      MemorySize: 1024
+      ImageConfig:
+        Command: ["handlers.generate_insights.lambda_handler"]
+      Policies:
+        - AmazonS3FullAccess
+        - AmazonDynamoDBFullAccess
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+              - bedrock:Converse
+            Resource: "*"
+      Events:
+        Gen:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MerchantApi
+            Path: /generate-insights
+            Method: POST
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: insights
+
+  ChatFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      ImageConfig:
+        Command: ["handlers.chat.lambda_handler"]
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+              - bedrock:Converse
+            Resource: "*"
+      Events:
+        Chat:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MerchantApi
+            Path: /chat
+            Method: POST
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: chat
+
+  WeeklyReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      ImageConfig:
+        Command: ["handlers.weekly_report.lambda_handler"]
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+              - bedrock:Converse
+            Resource: "*"
+      Events:
+        WeeklyReport:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MerchantApi
+            Path: /weekly-report
+            Method: POST
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: weekly
+
+  TestLLMFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      ImageConfig:
+        Command: ["handlers.test_llm.lambda_handler"]
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+            Resource: "*"
+      Events:
+        TestLLM:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MerchantApi
+            Path: /test-llm
+            Method: GET
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: .
+      DockerTag: testllm
+
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${MerchantApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+  ApiId:
+    Description: "API Gateway ID"
+    Value: !Ref MerchantApi
