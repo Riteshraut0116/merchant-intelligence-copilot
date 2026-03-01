@@ -1,0 +1,60 @@
+NETLIFY DEPLOYMENT INSTRUCTIONS FOR FRONTEND
+=============================================
+
+1. Create a Netlify account at https://netlify.com
+
+2. Update .env file:
+   - Copy .env.example to .env
+   - Set VITE_API_BASE_URL to your Render backend URL
+   - Example: VITE_API_BASE_URL=https://merchant-copilot-api.onrender.com
+
+3. Build the project locally (optional test):
+   npm install
+   npm run build
+   (This creates a dist/ folder)
+
+4. Deploy to Netlify:
+
+   METHOD A - Drag and Drop (Easiest):
+   - Run: npm run build
+   - Go to https://app.netlify.com/drop
+   - Drag the dist/ folder to the upload area
+   - Done! Your site is live
+
+   METHOD B - Netlify CLI:
+   - Install: npm install -g netlify-cli
+   - Run: netlify deploy --prod
+   - Follow prompts and select dist/ as publish directory
+
+   METHOD C - Git Integration:
+   - Push code to GitHub/GitLab/Bitbucket
+   - Click "New site from Git" in Netlify
+   - Connect repository
+   - Build settings (auto-detected from netlify.toml):
+     * Build command: npm run build
+     * Publish directory: dist
+   - Add environment variable:
+     * VITE_API_BASE_URL: your_render_backend_url
+   - Click "Deploy site"
+
+5. Configure Environment Variables (Netlify dashboard):
+   - Go to Site settings > Environment variables
+   - Add: VITE_API_BASE_URL = https://your-render-app.onrender.com
+
+6. Your site will be live at: https://random-name.netlify.app
+   - You can customize the domain in Site settings
+
+7. Enable automatic deploys (if using Git):
+   - Any push to main branch will trigger rebuild
+
+Files included for deployment:
+- netlify.toml (Netlify configuration)
+- package.json (dependencies and build scripts)
+- vite.config.ts (Vite build configuration)
+- src/ (application code)
+- index.html (entry point)
+
+IMPORTANT:
+- Always set VITE_API_BASE_URL before building
+- Environment variables must start with VITE_ to be accessible
+- Rebuild and redeploy if you change environment variables

@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: merchant-copilot-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: AWS_REGION
+        value: ap-south-1
+      - key: BEDROCK_MODEL_PRIMARY
+        value: amazon.nova-pro-v1:0
+      - key: BEDROCK_MODEL_FAST
+        value: amazon.nova-lite-v1:0
+      - key: BEDROCK_MODEL_BASELINE
+        value: amazon.nova-micro-v1:0
+      - key: TEMPERATURE
+        value: 0.2
+      - key: MAX_TOKENS
+        value: 500
+      - key: TOP_P
+        value: 0.9
+      - key: APP_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: INFO

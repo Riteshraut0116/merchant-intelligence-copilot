@@ -1,0 +1,157 @@
+DEPLOYMENT CHECKLIST
+====================
+
+Use this checklist to ensure successful deployment.
+
+PRE-DEPLOYMENT:
+---------------
+[ ] AWS account with Bedrock access enabled
+[ ] AWS Access Key ID and Secret Access Key ready
+[ ] Render account created (https://render.com)
+[ ] Netlify account created (https://netlify.com)
+[ ] Git repository (optional, for auto-deploy)
+
+BACKEND DEPLOYMENT (RENDER):
+-----------------------------
+[ ] Navigate to backend/ folder
+[ ] Verify files exist:
+    [ ] app.py
+    [ ] requirements.txt
+    [ ] Procfile
+    [ ] runtime.txt
+    [ ] render.yaml
+    [ ] src/ folder with all handlers
+
+[ ] Create new Web Service on Render
+[ ] Configure build settings:
+    [ ] Build Command: pip install -r requirements.txt
+    [ ] Start Command: gunicorn app:app
+    [ ] Python version: 3.12
+
+[ ] Add environment variables in Render:
+    [ ] AWS_ACCESS_KEY_ID
+    [ ] AWS_SECRET_ACCESS_KEY
+    [ ] AWS_REGION (ap-south-1)
+    [ ] BEDROCK_MODEL_PRIMARY (optional)
+    [ ] BEDROCK_MODEL_FAST (optional)
+    [ ] BEDROCK_MODEL_BASELINE (optional)
+
+[ ] Deploy and wait for completion
+[ ] Test health endpoint: https://your-app.onrender.com/health
+[ ] Copy backend URL for frontend configuration
+
+FRONTEND DEPLOYMENT (NETLIFY):
+-------------------------------
+[ ] Navigate to frontend/ folder
+[ ] Update .env file:
+    [ ] Set VITE_API_BASE_URL to your Render URL
+    [ ] Example: VITE_API_BASE_URL=https://your-app.onrender.com
+
+[ ] Install dependencies:
+    [ ] Run: npm install
+
+[ ] Build the project:
+    [ ] Run: npm run build
+    [ ] Verify dist/ folder is created
+
+[ ] Deploy to Netlify (choose one method):
+    METHOD 1 - Drag & Drop:
+    [ ] Go to https://app.netlify.com/drop
+    [ ] Drag dist/ folder to upload area
+    
+    METHOD 2 - CLI:
+    [ ] Install: npm install -g netlify-cli
+    [ ] Run: netlify deploy --prod
+    [ ] Select dist/ as publish directory
+    
+    METHOD 3 - Git:
+    [ ] Push code to Git repository
+    [ ] Connect repo in Netlify dashboard
+    [ ] Add VITE_API_BASE_URL environment variable
+    [ ] Deploy
+
+[ ] Verify deployment successful
+[ ] Test frontend: https://your-site.netlify.app
+
+POST-DEPLOYMENT TESTING:
+------------------------
+[ ] Backend health check works
+[ ] Frontend loads without errors
+[ ] Can upload CSV data
+[ ] Generate insights works
+[ ] Chat functionality works
+[ ] Weekly report generates
+[ ] All API calls succeed
+
+TROUBLESHOOTING:
+----------------
+Backend issues:
+- Check Render logs for errors
+- Verify AWS credentials are correct
+- Ensure Bedrock is enabled in your AWS region
+- Check environment variables are set
+
+Frontend issues:
+- Verify VITE_API_BASE_URL is correct
+- Check browser console for errors
+- Ensure backend is running and accessible
+- Rebuild if environment variables changed
+
+CORS issues:
+- Backend already configured for CORS
+- If using custom domain, update CORS settings in app.py
+
+Performance:
+- Render free tier has cold starts (first request slow)
+- Consider upgrading to paid tier for production
+- Netlify CDN provides fast static file delivery
+
+SECURITY:
+---------
+[ ] Never commit .env files to Git
+[ ] Use Render environment variables for secrets
+[ ] Rotate AWS keys regularly
+[ ] Enable HTTPS (automatic on Render/Netlify)
+[ ] Review CORS settings for production
+
+OPTIONAL ENHANCEMENTS:
+----------------------
+[ ] Set up custom domain on Netlify
+[ ] Configure custom domain on Render
+[ ] Enable automatic deployments from Git
+[ ] Set up monitoring and alerts
+[ ] Configure backup strategy
+[ ] Add rate limiting to API
+
+MAINTENANCE:
+------------
+[ ] Monitor Render logs regularly
+[ ] Check AWS Bedrock usage and costs
+[ ] Update dependencies periodically
+[ ] Review and rotate credentials
+[ ] Monitor application performance
+
+ROLLBACK PLAN:
+--------------
+If deployment fails:
+1. Check logs in Render/Netlify dashboard
+2. Verify all environment variables
+3. Test backend independently
+4. Rebuild frontend with correct API URL
+5. Contact support if needed
+
+SUPPORT RESOURCES:
+------------------
+- Render docs: https://render.com/docs
+- Netlify docs: https://docs.netlify.com
+- AWS Bedrock: https://aws.amazon.com/bedrock
+- Project docs: See DEPLOY_*.txt files
+
+DEPLOYMENT COMPLETE!
+--------------------
+Once all items are checked, your application is live and ready to use.
+
+Backend URL: https://your-app.onrender.com
+Frontend URL: https://your-site.netlify.app
+
+Share the frontend URL with users to access the application.

@@ -1,0 +1,200 @@
+MONOREPO DEPLOYMENT GUIDE
+=========================
+
+You can deploy both backend and frontend from a single repository.
+
+REPOSITORY STRUCTURE:
+---------------------
+merchant-intelligence-copilot/
+├── backend/              # Backend API
+├── frontend/             # Frontend UI
+├── docs/                 # Documentation
+└── deployment guides     # .txt files
+
+ADVANTAGES OF MONOREPO:
+-----------------------
+✓ Single repository to manage
+✓ Easier version control
+✓ Coordinated updates
+✓ Shared documentation
+✓ Simpler CI/CD setup
+
+DEPLOYMENT FROM MONOREPO:
+--------------------------
+
+BACKEND (RENDER):
+-----------------
+Method 1 - Git Integration:
+1. Connect your Git repository to Render
+2. In Render dashboard, set:
+   - Root Directory: merchant-intelligence-copilot-files/backend
+   - Build Command: pip install -r requirements.txt
+   - Start Command: gunicorn app:app
+3. Add environment variables
+4. Deploy
+
+Method 2 - Direct Upload:
+1. Zip ONLY the backend/ folder
+2. Upload to Render
+3. Configure and deploy
+
+FRONTEND (NETLIFY):
+-------------------
+Method 1 - Git Integration:
+1. Connect your Git repository to Netlify
+2. In Netlify dashboard, set:
+   - Base directory: merchant-intelligence-copilot-files/frontend
+   - Build command: npm run build
+   - Publish directory: merchant-intelligence-copilot-files/frontend/dist
+3. Add environment variable: VITE_API_BASE_URL
+4. Deploy
+
+Method 2 - Direct Upload:
+1. cd merchant-intelligence-copilot-files/frontend
+2. npm install && npm run build
+3. Drag dist/ folder to https://app.netlify.com/drop
+
+Method 3 - Netlify CLI:
+1. cd merchant-intelligence-copilot-files/frontend
+2. npm install
+3. netlify deploy --prod
+
+RENDER CONFIGURATION (render.yaml):
+------------------------------------
+If using Git, Render will automatically detect render.yaml in backend/
+
+Or manually configure in dashboard:
+- Repository: your-repo
+- Root Directory: merchant-intelligence-copilot-files/backend
+- Environment: Python 3
+- Build: pip install -r requirements.txt
+- Start: gunicorn app:app
+
+NETLIFY CONFIGURATION:
+----------------------
+In Netlify dashboard > Site settings > Build & deploy:
+
+Build settings:
+- Base directory: merchant-intelligence-copilot-files/frontend
+- Build command: npm run build
+- Publish directory: merchant-intelligence-copilot-files/frontend/dist
+
+Environment variables:
+- VITE_API_BASE_URL: https://your-render-app.onrender.com
+
+GITIGNORE FOR MONOREPO:
+-----------------------
+Add to root .gitignore:
+
+# Backend
+backend/.env
+backend/__pycache__/
+backend/.aws-sam/
+backend/src/__pycache__/
+
+# Frontend
+frontend/.env
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+DEPLOYMENT WORKFLOW:
+--------------------
+1. Push code to Git repository
+2. Render auto-deploys backend (if connected)
+3. Netlify auto-deploys frontend (if connected)
+4. Both services watch for changes
+
+SEPARATE REPOS VS MONOREPO:
+----------------------------
+
+MONOREPO (Current - Recommended):
+Pros:
+✓ Single source of truth
+✓ Easier to keep in sync
+✓ Simpler for small teams
+✓ Coordinated releases
+
+Cons:
+✗ Larger repository size
+✗ Both services deploy on any change
+
+SEPARATE REPOS:
+Pros:
+✓ Independent deployment
+✓ Smaller repo sizes
+✓ Team separation possible
+
+Cons:
+✗ More repos to manage
+✗ Harder to keep in sync
+✗ More complex versioning
+
+RECOMMENDATION:
+---------------
+Keep as MONOREPO for this project because:
+- Small to medium size
+- Tightly coupled frontend/backend
+- Easier maintenance
+- Both Render and Netlify support it well
+
+TESTING MONOREPO DEPLOYMENT:
+-----------------------------
+1. Create a test Git repository
+2. Push your code
+3. Connect to Render (point to backend/)
+4. Connect to Netlify (point to frontend/)
+5. Verify both deploy correctly
+
+ALTERNATIVE: SEPARATE REPOS
+----------------------------
+If you prefer separate repos:
+
+1. Create two repositories:
+   - merchant-copilot-backend
+   - merchant-copilot-frontend
+
+2. Split the code:
+   Backend repo:
+   - Copy backend/ contents to root
+   - Add backend deployment guides
+
+   Frontend repo:
+   - Copy frontend/ contents to root
+   - Add frontend deployment guides
+
+3. Deploy each independently
+
+MONOREPO CI/CD (Advanced):
+--------------------------
+For automatic deployments:
+
+GitHub Actions example:
+- Detect which folder changed
+- Deploy only changed service
+- Run tests before deploy
+
+This is optional and not required for basic deployment.
+
+CONCLUSION:
+-----------
+✓ MONOREPO is fine and recommended
+✓ Both platforms support subdirectory deployment
+✓ Easier to manage for this project size
+✓ No need to split unless you have specific requirements
+
+QUICK START WITH MONOREPO:
+---------------------------
+1. Push entire project to Git
+2. Render: Set root dir to backend/
+3. Netlify: Set base dir to frontend/
+4. Done!
+
+Or use direct upload method (no Git needed):
+1. Zip backend/ → Upload to Render
+2. Build frontend/ → Drag dist/ to Netlify
+3. Done!

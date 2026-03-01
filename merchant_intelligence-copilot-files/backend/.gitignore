@@ -1,44 +1,42 @@
-# AWS SAM build artifacts
-.aws-sam/
-.aws-sam
-
-# SAM configuration (may contain sensitive info)
-samconfig.toml
-
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
+*$py.class
+*.so
 .Python
-
-# Virtual environment
-.venv/
+env/
 venv/
 ENV/
-env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Environment files (NEVER commit)
+# Environment
 .env
 .env.local
-.env.development
-.env.production
-src/.env
-src/.env.local
 
-# AWS credentials (NEVER commit)
-credentials
-aws-credentials
-.aws/credentials
-
-# Build artifacts
-*.zip
-*.tar.gz
-
-# Logs
-*.log
+# AWS SAM
+.aws-sam/
 
 # IDE
 .vscode/
 .idea/
 *.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

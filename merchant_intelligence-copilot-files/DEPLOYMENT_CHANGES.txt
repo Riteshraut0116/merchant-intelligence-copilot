@@ -1,0 +1,102 @@
+DEPLOYMENT CHANGES SUMMARY
+==========================
+
+This project has been converted from AWS Lambda/SAM to Render (backend) and Netlify (frontend).
+
+BACKEND CHANGES:
+----------------
+NEW FILES:
+✓ app.py - Flask application that wraps Lambda handlers
+✓ Procfile - Render start command (gunicorn app:app)
+✓ runtime.txt - Python version specification (3.12.0)
+✓ render.yaml - Render service configuration
+✓ .gitignore - Python/Flask specific ignores
+
+UPDATED FILES:
+✓ requirements.txt - Added Flask, Flask-CORS, gunicorn, python-dotenv
+✓ src/requirements.txt - Same as above
+✓ .env.example - Added PORT variable, updated for production
+
+UNCHANGED:
+- All handler files (health.py, chat.py, generate_insights.py, weekly_report.py)
+- All common modules (bedrock_nova.py, config.py, etc.)
+- Business logic remains identical
+
+FRONTEND CHANGES:
+-----------------
+NEW FILES:
+✓ netlify.toml - Netlify build and redirect configuration
+✓ .gitignore - Node/React specific ignores
+
+UPDATED FILES:
+✓ .env.example - Updated API URL to point to Render
+
+UNCHANGED:
+- All React components and pages
+- All hooks and utilities
+- Build configuration (vite.config.ts)
+- Package dependencies
+
+DEPLOYMENT FILES:
+-----------------
+✓ QUICKSTART_DEPLOYMENT.txt - Quick start guide
+✓ DEPLOY_BACKEND_RENDER.txt - Detailed Render instructions
+✓ DEPLOY_FRONTEND_NETLIFY.txt - Detailed Netlify instructions
+✓ DEPLOYMENT_CHANGES.txt - This file
+
+HOW IT WORKS:
+-------------
+Backend:
+- Flask app (app.py) receives HTTP requests
+- Converts them to Lambda event format
+- Calls existing Lambda handlers
+- Converts Lambda response back to Flask response
+- Zero changes to business logic
+
+Frontend:
+- Vite builds static files to dist/
+- Netlify serves static files
+- API calls go to Render backend
+- Environment variable controls API URL
+
+DEPLOYMENT METHODS:
+-------------------
+Backend (Render):
+1. Direct upload: Zip backend folder and upload
+2. Git integration: Connect repo and auto-deploy
+3. CLI: Use render CLI for deployment
+
+Frontend (Netlify):
+1. Drag & drop: Build locally, drag dist/ folder
+2. Git integration: Connect repo and auto-deploy
+3. CLI: Use netlify CLI for deployment
+
+ENVIRONMENT VARIABLES:
+----------------------
+Backend (Render):
+- AWS_ACCESS_KEY_ID (required)
+- AWS_SECRET_ACCESS_KEY (required)
+- AWS_REGION (default: ap-south-1)
+- BEDROCK_MODEL_* (defaults provided)
+- PORT (auto-set by Render)
+
+Frontend (Netlify):
+- VITE_API_BASE_URL (required, set to Render URL)
+
+COST:
+-----
+- Render: Free tier available (with cold starts)
+- Netlify: Free tier includes 100GB bandwidth
+- AWS Bedrock: Pay per API call
+
+NEXT STEPS:
+-----------
+1. Deploy backend to Render
+2. Get backend URL
+3. Update frontend .env with backend URL
+4. Build and deploy frontend to Netlify
+5. Test the application
+
+For support, refer to:
+- Render docs: https://render.com/docs
+- Netlify docs: https://docs.netlify.com

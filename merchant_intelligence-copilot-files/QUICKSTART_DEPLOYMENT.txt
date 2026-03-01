@@ -1,0 +1,60 @@
+QUICK START - DEPLOY TO RENDER & NETLIFY
+=========================================
+
+This guide helps you deploy the Merchant Intelligence Copilot to production.
+
+PREREQUISITES:
+- AWS account with Bedrock access (for AI features)
+- Render account (for backend API)
+- Netlify account (for frontend)
+
+STEP 1: DEPLOY BACKEND TO RENDER
+---------------------------------
+1. Go to https://render.com and sign up/login
+2. Click "New +" > "Web Service"
+3. Upload the backend/ folder or connect Git repo
+4. Settings:
+   - Name: merchant-copilot-api
+   - Environment: Python 3
+   - Build: pip install -r requirements.txt
+   - Start: gunicorn app:app
+5. Add environment variables:
+   - AWS_ACCESS_KEY_ID (required)
+   - AWS_SECRET_ACCESS_KEY (required)
+   - AWS_REGION: ap-south-1
+6. Deploy and copy your URL (e.g., https://merchant-copilot-api.onrender.com)
+
+STEP 2: DEPLOY FRONTEND TO NETLIFY
+-----------------------------------
+1. Update frontend/.env:
+   VITE_API_BASE_URL=https://your-render-url.onrender.com
+
+2. Build locally:
+   cd frontend
+   npm install
+   npm run build
+
+3. Deploy to Netlify:
+   - Go to https://app.netlify.com/drop
+   - Drag the dist/ folder
+   - Done!
+
+ALTERNATIVE: Use Netlify CLI
+   npm install -g netlify-cli
+   netlify deploy --prod
+
+Your app is now live!
+
+TESTING:
+- Backend: https://your-render-url.onrender.com/health
+- Frontend: https://your-site.netlify.app
+
+IMPORTANT NOTES:
+- Render free tier: First request may be slow (cold start)
+- Update CORS settings if using custom domain
+- Set environment variables in Render dashboard for security
+- Netlify rebuilds automatically on Git push (if connected)
+
+For detailed instructions, see:
+- DEPLOY_BACKEND_RENDER.txt
+- DEPLOY_FRONTEND_NETLIFY.txt
