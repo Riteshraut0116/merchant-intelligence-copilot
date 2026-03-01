@@ -1,6 +1,8 @@
 RENDER DEPLOYMENT INSTRUCTIONS FOR BACKEND
 ==========================================
 
+IMPORTANT: If you get "gunicorn: command not found" error, see RENDER_TROUBLESHOOTING.txt
+
 1. Create a Render account at https://render.com
 
 2. Click "New +" and select "Web Service"
@@ -10,8 +12,9 @@ RENDER DEPLOYMENT INSTRUCTIONS FOR BACKEND
 4. Configure the service:
    - Name: merchant-copilot-api
    - Environment: Python 3
+   - Root Directory: backend (or merchant-intelligence-copilot-files/backend if monorepo)
    - Build Command: pip install -r requirements.txt
-   - Start Command: gunicorn app:app
+   - Start Command: python -m gunicorn app:app --bind 0.0.0.0:$PORT
    - Instance Type: Free or Starter
 
 5. Add Environment Variables (in Render dashboard):
@@ -38,6 +41,11 @@ RENDER DEPLOYMENT INSTRUCTIONS FOR BACKEND
 
 9. Update frontend .env with this URL
 
+TROUBLESHOOTING:
+If deployment fails with "gunicorn: command not found":
+- See RENDER_TROUBLESHOOTING.txt for detailed solutions
+- Quick fix: Change Start Command to: python app.py
+
 DIRECT UPLOAD METHOD:
 - Zip the backend folder
 - Upload to Render via "Manual Deploy" option
@@ -46,7 +54,8 @@ DIRECT UPLOAD METHOD:
 Files included for deployment:
 - app.py (Flask application)
 - requirements.txt (Python dependencies)
-- Procfile (Render start command)
+- Procfile (Render start command - uses python -m gunicorn)
 - runtime.txt (Python version)
 - render.yaml (Render configuration)
+- build.sh (Build script)
 - src/ (application code)
