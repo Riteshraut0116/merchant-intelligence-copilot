@@ -114,3 +114,25 @@ Resources:
             RestApiId: { "Ref": "MerchantApi" }
             Path: /weekly-report
             Method: POST
+
+  TestLLMFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: handlers.test_llm.lambda_handler
+      Timeout: 30
+      MemorySize: 512
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+              - bedrock:InvokeModelWithResponseStream
+            Resource: "*"
+      Events:
+        TestLLM:
+          Type: Api
+          Properties:
+            RestApiId: { "Ref": "MerchantApi" }
+            Path: /test-llm
+            Method: GET

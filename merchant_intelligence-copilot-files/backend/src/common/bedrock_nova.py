@@ -1,17 +1,18 @@
 import json, boto3, os
-from .config import AWS_REGION, TEMPERATURE, TOP_P, MAX_TOKENS
+from .config import TEMPERATURE, TOP_P, MAX_TOKENS
 
-# Initialize Bedrock client with credentials from environment
+# Initialize Bedrock client
+# Nova models are available in us-east-1, use that region for Bedrock
+# Lambda can be in any region, IAM role credentials are used automatically
 br = boto3.client(
     "bedrock-runtime",
-    region_name=AWS_REGION,
-    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
+    region_name="us-east-1"  # Use us-east-1 for Bedrock Nova models
 )
 
 def nova_converse(model_id: str, system: str, user: str):
     """
-    Call AWS Bedrock Converse API for Nova models.
+    Call AWS Bedrock using invoke_model API for Nova models.
+    Uses the direct API with model-specific payload format.
     Returns the text response from the model.
     """
     import logging
@@ -21,32 +22,58 @@ def nova_converse(model_id: str, system: str, user: str):
         logger.info(f"Calling Bedrock with model: {model_id}")
         logger.info(f"System prompt length: {len(system)}, User prompt length: {len(user)}")
         
-        response = br.converse(
-            modelId=model_id,
-            messages=[
+        # Construct the request body for Nova models
+        # Nova models use a specific format with system and messages
+        request_body = {
+            "messages": [
                 {
                     "role": "user",
-                    "content": [{"text": user}]
+                    "content": [
+                        {
+                            "text": user
+                        }
+                    ]
                 }
             ],
-            system=[{"text": system}],
-            inferenceConfig={
+            "system": [
+                {
+                    "text": system
+                }
+            ],
+            "inferenceConfig": {
                 "temperature": TEMPERATURE,
                 "topP": TOP_P,
                 "maxTokens": MAX_TOKENS
             }
+        }
+        
+        logger.info(f"Request body: {json.dumps(request_body)[:500]}...")
+        
+        # Call Bedrock invoke_model API
+        response = br.invoke_model(
+            modelId=model_id,
+            body=json.dumps(request_body),
+            contentType="application/json",
+            accept="application/json"
         )
         
-        logger.info(f"Bedrock response received: {response.get('ResponseMetadata', {}).get('HTTPStatusCode')}")
+        # Parse response
+        response_body = json.loads(response['body'].read())
+        logger.info(f"Response received: {json.dumps(response_body)[:500]}...")
         
-        # Extract text from response
-        output = response.get("output", {})
+        # Extract text from Nova response format
+        # Nova returns: {"output": {"message": {"role": "assistant", "content": [{"text": "..."}]}}}
+        output = response_body.get("output", {})
         message = output.get("message", {})
         content = message.get("content", [])
         
         # Combine all text parts
         text_parts = [part.get("text", "") for part in content if "text" in part]
         result = " ".join(text_parts).strip()
+        
+        if not result:
+            logger.error(f"No text found in response: {response_body}")
+            raise Exception("Empty response from model")
         
         logger.info(f"Extracted text length: {len(result)}")
         return result
