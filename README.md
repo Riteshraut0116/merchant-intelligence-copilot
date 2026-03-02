@@ -35,12 +35,35 @@ Merchant Intelligence Copilot is an AI-powered decision assistant that transform
 
 ## 🌐 Live Demo
 
-Experience the Merchant Intelligence Copilot in action:
+Experience the Merchant Intelligence Copilot in action with two deployment options:
 
-### 🚀 Deployed Application
-- **Frontend**: [Live Demo Link](https://your-frontend-url.netlify.app) 🌟
-- **Backend API**: [API Endpoint](https://your-api-gateway-url.execute-api.ap-south-1.amazonaws.com/prod) ⚡
-- **Status**: ✅ Production Ready
+### 🚀 Option 1: AWS + S3 (Serverless)
+**Production-grade deployment using AWS Lambda and S3 static hosting**
+
+- 🔗 **Frontend**: [http://merchant-intelligence-frontend-20260302035305.s3-website.ap-south-1.amazonaws.com](http://merchant-intelligence-frontend-20260302035305.s3-website.ap-south-1.amazonaws.com)
+- ⚡ **API Endpoint**: [https://7tku6c6c9j.execute-api.ap-south-1.amazonaws.com/prod/](https://7tku6c6c9j.execute-api.ap-south-1.amazonaws.com/prod/)
+- 🌍 **Region**: ap-south-1 (Mumbai, India)
+- ✅ **Status**: Production Ready
+
+**Features:**
+- 📦 Docker-based Lambda deployment (handles large dependencies)
+- � IAM role-based authentication
+- 🚀 Auto-scaling with AWS Lambda
+- � Cost-effective serverless architecture
+
+### 🎨 Option 2: Render + Netlify (Platform-as-a-Service)
+**Easy deployment with managed hosting platforms**
+
+- 🔗 **Frontend**: [https://merchant-intelligence-copilot.netlify.app/](https://merchant-intelligence-copilot.netlify.app/)
+- ⚡ **Backend API**: [https://merchant-intelligence-copilot.onrender.com](https://merchant-intelligence-copilot.onrender.com)
+- 🌍 **Global CDN**: Netlify Edge Network
+- ✅ **Status**: Production Ready
+
+**Features:**
+- 🎯 One-click deployment from GitHub
+- 🔄 Automatic deployments on git push
+- 🌐 Global CDN for fast loading
+- 💻 Easy for developers without AWS expertise
 
 ### 📊 UI Dashboard Preview
 ![Merchant Intelligence Copilot Dashboard](merchant_intelligence-copilot-files/sample-data/screenshot.png)
@@ -48,19 +71,19 @@ Experience the Merchant Intelligence Copilot in action:
 **Features Showcase**: 
 📈 Real-time KPIs & Forecasts | 💬 Multilingual Chat Interface | 📋 AI-Generated Reports | ⚙️ 5 Beautiful Themes | 🌐 English, Hindi & Marathi Support
 
-### 📺 Demo Video
-- **Demo Video Link**: [Watch Demo](https://youtube.com/your-demo-video) 🎥
-- **Duration**: 5 minutes
-- **Highlights**: CSV upload, forecasting, chat interface, multilingual support
-
 ### 🧪 Try It Yourself
-1. Visit the live demo link above
+1. Visit either live demo link above
 2. Upload sample data from `sample-data/msme_sales_90days.csv`
 3. Explore AI-powered insights in English, Hindi, or Marathi
 4. Chat with the copilot to ask business questions
 5. Switch themes and languages in Settings
 
-> **Note**: Replace the placeholder URLs above with your actual deployment links before submission.
+### 🎥 Demo Video
+- **Demo Video Link**: [Watch Demo](https://youtube.com/your-demo-video) 🎥
+- **Duration**: 5 minutes
+- **Highlights**: CSV upload, forecasting, chat interface, multilingual support
+
+> **Note**: Both deployments use the same codebase and features. Choose based on your preference!
 
 ---
 
