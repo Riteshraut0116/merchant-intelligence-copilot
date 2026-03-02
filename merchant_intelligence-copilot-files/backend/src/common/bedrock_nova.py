@@ -1,11 +1,14 @@
 import json, boto3, logging
-from .config import AWS_REGION, TEMPERATURE, TOP_P, MAX_TOKENS
+from .config import TEMPERATURE, TOP_P, MAX_TOKENS
 
 logger = logging.getLogger()
 
+# Initialize Bedrock client
+# Use us-east-1 for Bedrock Nova models (they work best in this region)
+# For Render deployment, AWS credentials will come from environment variables
 try:
-    br = boto3.client("bedrock-runtime", region_name=AWS_REGION)
-    logger.info(f"Bedrock client initialized for region: {AWS_REGION}")
+    br = boto3.client("bedrock-runtime", region_name="us-east-1")
+    logger.info("Bedrock client initialized for region: us-east-1")
 except Exception as e:
     logger.error(f"Failed to initialize Bedrock client: {str(e)}")
     br = None
