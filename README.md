@@ -79,7 +79,7 @@ Experience the Merchant Intelligence Copilot in action with two deployment optio
 5. Switch themes and languages in Settings
 
 ### 🎥 Demo Video
-- **Demo Video Link**: [Watch Demo](https://youtube.com/your-demo-video) 🎥
+- **Demo Video Link**: [Watch Demo](https://drive.google.com/file/d/1Oqb5k2ihJ534pAPsTxLj5ds8FYDpeKc3/view?usp=sharing) 🎥
 - **Duration**: 5 minutes
 - **Highlights**: CSV upload, forecasting, chat interface, multilingual support
 
@@ -1009,3 +1009,4 @@ AI-powered decision copilot for Bharat’s MSME sellers 📊🤖
 ---
 
 **Built with ❤️ for Bharat MSMEs**
+
